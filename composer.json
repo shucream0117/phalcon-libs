@@ -11,9 +11,7 @@
   "require": {
     "php": ">=7.4.0",
     "ext-phalcon": "^4.0",
-    "ext-imagick": "*",
     "ext-json": "*",
-    "ext-redis": "*",
     "psr/http-message": "^1.0",
     "symfony/http-foundation": "^5.0",
     "guzzlehttp/guzzle": "^6.5",
