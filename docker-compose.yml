@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  # for executing unit test
+  app:
+    build:
+      context: .
+      dockerfile: docker/phalcon/Dockerfile
+    volumes:
+      - .:/app

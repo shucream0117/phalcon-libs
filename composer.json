@@ -1,0 +1,38 @@
+{
+  "name": "shucream0117/phalcon-libs",
+  "description": "Extension Library For Phalcon",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "shucream0117"
+    }
+  ],
+  "require": {
+    "php": ">=7.4.0",
+    "ext-phalcon": "^4.0",
+    "ext-imagick": "*",
+    "ext-json": "*",
+    "ext-redis": "*",
+    "psr/http-message": "^1.0",
+    "symfony/http-foundation": "^5.0",
+    "guzzlehttp/guzzle": "^6.5",
+    "robinvdvleuten/ulid": "^4.0",
+    "aws/aws-sdk-php": "^3.137",
+    "abraham/twitteroauth": "^1.1"
+  },
+  "require-dev": {
+    "phalcon/ide-stubs": "^4.0",
+    "phpunit/phpunit": "^9"
+  },
+  "autoload": {
+    "psr-4": {
+      "Shucream0117\\PhalconLib\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
+    }
+  }
+}
