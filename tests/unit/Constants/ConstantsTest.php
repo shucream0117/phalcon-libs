@@ -46,15 +46,27 @@ class ConstantsTest extends TestBase
 
     protected static function getClassNames(): array
     {
-        $constantsDir = __DIR__ . '/../../../src/Constants';
-        $namespace = '\\Shucream0117\\PhalconLib\\Constants';
-        $files = scandir($constantsDir);
+        return self::getClassNamesRecursively(__DIR__ . '/../../../src/Constants');
+    }
+
+    protected static function getClassNamesRecursively(
+        string $dir,
+        string $namespace = '\\Shucream0117\\PhalconLib\\Constants'
+    ): array {
+        $files = array_filter(scandir($dir), fn($fileName) => preg_match('/^\./', $fileName) !== 1);
         $result = [];
         foreach ($files as $file) {
+            $path = "{$dir}/{$file}";
             if (preg_match('/(.*)\.php$/', $file, $matches)) {
-                $filePath = "{$constantsDir}/{$file}";
-                require_once $filePath;
                 $result[] = "{$namespace}\\{$matches[1]}";
+                continue;
+            }
+
+            if (is_dir($path)) {
+                $result = array_merge($result, self::getClassNamesRecursively(
+                    $path,
+                    "{$namespace}\\{$file}"
+                ));
             }
         }
         return $result;
