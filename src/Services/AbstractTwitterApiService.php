@@ -8,6 +8,7 @@ use Abraham\TwitterOAuth\TwitterOAuth;
 use Abraham\TwitterOAuth\TwitterOAuthException;
 use Shucream0117\PhalconLib\Entities\Twitter\AbstractUser as AbstractTwitterUser;
 use Shucream0117\PhalconLib\Entities\Twitter\AccessToken;
+use Shucream0117\PhalconLib\Entities\Twitter\AccountSetting;
 use Shucream0117\PhalconLib\Entities\Twitter\RequestToken;
 
 abstract class AbstractTwitterApiService extends AbstractService
