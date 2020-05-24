@@ -24,7 +24,7 @@ class StringUtil extends Str
 
     /**
      * 絵文字を除去する
-     * 
+     *
      * @param string $str
      * @return string
      */

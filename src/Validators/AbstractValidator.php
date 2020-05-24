@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Shucream0117\PhalconLib\Validators;
 
+use Phalcon\Di\Injectable;
 use Phalcon\Validation;
 
-abstract class AbstractValidator
+abstract class AbstractValidator extends Injectable
 {
     protected function optionCancelOnFail(): array
     {
