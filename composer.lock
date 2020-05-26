@@ -62,16 +62,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.137.8",
+            "version": "3.138.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "0116efff39048d9bc163d3c287a85cce30b9aa20"
+                "reference": "bc3d77e84d1589c9536f94043622bf56d1d68809"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/0116efff39048d9bc163d3c287a85cce30b9aa20",
-                "reference": "0116efff39048d9bc163d3c287a85cce30b9aa20",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/bc3d77e84d1589c9536f94043622bf56d1d68809",
+                "reference": "bc3d77e84d1589c9536f94043622bf56d1d68809",
                 "shasum": ""
             },
             "require": {
@@ -142,20 +142,20 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-05-12T18:14:22+00:00"
+            "time": "2020-05-26T18:10:59+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
-            "version": "6.5.3",
+            "version": "6.5.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/guzzle.git",
-                "reference": "aab4ebd862aa7d04f01a4b51849d657db56d882e"
+                "reference": "a4a1b6930528a8f7ee03518e6442ec7a44155d9d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/aab4ebd862aa7d04f01a4b51849d657db56d882e",
-                "reference": "aab4ebd862aa7d04f01a4b51849d657db56d882e",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/a4a1b6930528a8f7ee03518e6442ec7a44155d9d",
+                "reference": "a4a1b6930528a8f7ee03518e6442ec7a44155d9d",
                 "shasum": ""
             },
             "require": {
@@ -163,7 +163,7 @@
                 "guzzlehttp/promises": "^1.0",
                 "guzzlehttp/psr7": "^1.6.1",
                 "php": ">=5.5",
-                "symfony/polyfill-intl-idn": "^1.11"
+                "symfony/polyfill-intl-idn": "1.17.0"
             },
             "require-dev": {
                 "ext-curl": "*",
@@ -209,7 +209,7 @@
                 "rest",
                 "web service"
             ],
-            "time": "2020-04-18T10:38:46+00:00"
+            "time": "2020-05-25T19:35:05+00:00"
         },
         {
             "name": "guzzlehttp/promises",
@@ -992,16 +992,16 @@
         },
         {
             "name": "phalcon/ide-stubs",
-            "version": "v4.0.4",
+            "version": "v4.0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phalcon/ide-stubs.git",
-                "reference": "f3ef56204ded840477793edb58992f1bd88ffa36"
+                "reference": "d2adae3fba488ccba913a3f7fc310f23aa6de4a3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phalcon/ide-stubs/zipball/f3ef56204ded840477793edb58992f1bd88ffa36",
-                "reference": "f3ef56204ded840477793edb58992f1bd88ffa36",
+                "url": "https://api.github.com/repos/phalcon/ide-stubs/zipball/d2adae3fba488ccba913a3f7fc310f23aa6de4a3",
+                "reference": "d2adae3fba488ccba913a3f7fc310f23aa6de4a3",
                 "shasum": ""
             },
             "require": {
@@ -1019,8 +1019,8 @@
             "authors": [
                 {
                     "name": "Phalcon Team",
-                    "email": "team@phalconphp.io",
-                    "homepage": "https://phalconphp.io/en/team"
+                    "email": "team@phalcon.io",
+                    "homepage": "https://phalcon.io/en-us/team"
                 },
                 {
                     "name": "Contributors",
@@ -1028,7 +1028,7 @@
                 }
             ],
             "description": "The most complete Phalcon Framework IDE stubs library which enables autocompletion in modern IDEs.",
-            "homepage": "https://phalconphp.io",
+            "homepage": "https://phalcon.io",
             "keywords": [
                 "Devtools",
                 "Eclipse",
@@ -1040,7 +1040,17 @@
                 "stub",
                 "stubs"
             ],
-            "time": "2020-02-16T08:55:47+00:00"
+            "funding": [
+                {
+                    "url": "https://github.com/phalcon",
+                    "type": "github"
+                },
+                {
+                    "url": "https://opencollective.com/phalcon",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2020-05-18T20:16:38+00:00"
         },
         {
             "name": "phar-io/manifest",
@@ -1357,16 +1367,16 @@
         },
         {
             "name": "phpunit/php-code-coverage",
-            "version": "8.0.1",
+            "version": "8.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "31e94ccc084025d6abee0585df533eb3a792b96a"
+                "reference": "ca6647ffddd2add025ab3f21644a441d7c146cdc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/31e94ccc084025d6abee0585df533eb3a792b96a",
-                "reference": "31e94ccc084025d6abee0585df533eb3a792b96a",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/ca6647ffddd2add025ab3f21644a441d7c146cdc",
+                "reference": "ca6647ffddd2add025ab3f21644a441d7c146cdc",
                 "shasum": ""
             },
             "require": {
@@ -1417,7 +1427,13 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2020-02-19T13:41:19+00:00"
+            "funding": [
+                {
+                    "url": "https://github.com/sebastianbergmann",
+                    "type": "github"
+                }
+            ],
+            "time": "2020-05-23T08:02:54+00:00"
         },
         {
             "name": "phpunit/php-file-iterator",
@@ -1686,16 +1702,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "9.1.4",
+            "version": "9.1.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "2d7080c622cf7884992e7c3cf87853877bae8ff4"
+                "reference": "1b570cd7edbe136055bf5f651857dc8af6b829d2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/2d7080c622cf7884992e7c3cf87853877bae8ff4",
-                "reference": "2d7080c622cf7884992e7c3cf87853877bae8ff4",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/1b570cd7edbe136055bf5f651857dc8af6b829d2",
+                "reference": "1b570cd7edbe136055bf5f651857dc8af6b829d2",
                 "shasum": ""
             },
             "require": {
@@ -1780,7 +1796,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-04-30T06:32:53+00:00"
+            "time": "2020-05-22T13:54:05+00:00"
         },
         {
             "name": "sebastian/code-unit",
