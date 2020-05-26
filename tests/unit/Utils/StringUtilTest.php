@@ -33,4 +33,28 @@ class StringUtilTest extends TestBase
             ['🍕こん🍣にちは🍺', 'こんにちは'],
         ];
     }
+
+    /**
+     * @param string $input
+     * @param string $expected
+     * @dataProvider dataProviderForTestRemovePlusSectionFromEmail
+     */
+    public function testRemovePlusSectionFromEmail(string $input, string $expected)
+    {
+        $this->assertSame($expected, StringUtil::removePlusSectionFromEmail($input));
+    }
+
+    public function dataProviderForTestRemovePlusSectionFromEmail(): array
+    {
+        return [
+            ['shucream117@gmail.com', 'shucream117@gmail.com'],
+            ['shucream.117@gmail.com', 'shucream.117@gmail.com'],
+            ['shucream.117+hoge@gmail.com', 'shucream.117@gmail.com'],
+            ['shucream117+hoge@gmail.com', 'shucream117@gmail.com'],
+            ['shucream117+hoge+fuga@gmail.com', 'shucream117@gmail.com'],
+            ['shucream117+hoge+fuga+piyo@gmail.com', 'shucream117@gmail.com'],
+            ['shucream117+ほげ@gmail.com', 'shucream117@gmail.com'],
+            ['shucream117+@gmail.com', 'shucream117@gmail.com'],
+        ];
+    }
 }
