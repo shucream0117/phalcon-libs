@@ -30,14 +30,7 @@ abstract class AbstractValidator extends Injectable
              * 必須ではない場合(=PresenceOfがない場合) に、$params[$field]が存在しない場合はそもそもバリデーションに含めない。
              * そうしないとオプショナルパラメータが送られていない場合もエラーを出してしまうため。
              */
-            $hasPresenceOf = false;
-            foreach ($rule->getRules() as $r) {
-                if ($r instanceof Validation\Validator\PresenceOf) {
-                    $hasPresenceOf = true;
-                    break;
-                }
-            }
-            if (!$hasPresenceOf && !array_key_exists($field, $params)) {
+            if (!$rule->isRequired() && !array_key_exists($field, $params)) {
                 continue;
             }
 
