@@ -57,4 +57,31 @@ class StringUtilTest extends TestBase
             ['shucream117+@gmail.com', 'shucream117@gmail.com'],
         ];
     }
+
+    /**
+     * @covers       StringUtil::hasEmoji
+     * @param string $input
+     * @param bool $expected
+     * @dataProvider dataProviderForTestHasEmoji
+     */
+    public function testHasEmoji(string $input, bool $expected)
+    {
+        $this->assertSame($expected, StringUtil::hasEmoji($input));
+    }
+
+    public function dataProviderForTestHasEmoji(): array
+    {
+        return [
+            ['test', false],
+            ['1234', false],
+            ['てすと', false],
+            ['テスト', false],
+            ['検証', false],
+            ['test1234てすと検証', false],
+            ['☔', true],
+            ['こんにちは🍕', true],
+            ['こんに🍕ちは', true],
+            ['🍕こん🍣にちは🍺', true],
+        ];
+    }
 }
