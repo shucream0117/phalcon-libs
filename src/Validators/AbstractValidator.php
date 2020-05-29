@@ -25,6 +25,22 @@ abstract class AbstractValidator extends Injectable
         $validator = new Validation();
         foreach ($rules as $rule) {
             $field = $rule->getField();
+
+            /*
+             * 必須ではない場合(=PresenceOfがない場合) に、$params[$field]が存在しない場合はそもそもバリデーションに含めない。
+             * そうしないとオプショナルパラメータが送られていない場合もエラーを出してしまうため。
+             */
+            $hasPresenceOf = false;
+            foreach ($rule->getRules() as $r) {
+                if ($r instanceof Validation\Validator\PresenceOf) {
+                    $hasPresenceOf = true;
+                    break;
+                }
+            }
+            if (!$hasPresenceOf && !array_key_exists($field, $params)) {
+                continue;
+            }
+
             $validator->rules($field, $rule->getRules());
             if (array_key_exists($field, $params)) {
                 $targetParams[$field] = $params[$field];
