@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\Constants;
+namespace Tests\Unit\Utils;
 
 use Shucream0117\PhalconLib\Utils\StringUtil;
 use Tests\Unit\TestBase;
