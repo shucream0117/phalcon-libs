@@ -17,7 +17,8 @@
     "guzzlehttp/guzzle": "^6.5",
     "robinvdvleuten/ulid": "^4.0",
     "aws/aws-sdk-php": "^3.137",
-    "abraham/twitteroauth": "^1.1"
+    "abraham/twitteroauth": "^1.1",
+    "payjp/payjp-php": "^1.1"
   },
   "require-dev": {
     "phalcon/ide-stubs": "^4.0",
