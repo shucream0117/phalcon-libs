@@ -6,6 +6,11 @@ namespace Shucream0117\PhalconLib\Utils;
 
 use Phalcon\Helper\Str;
 
+/**
+ * 親クラスに関してstubが仕事していない部分があるのでここで補完しておく
+ *
+ * @method static string concat($separator, ...$str)
+ */
 class StringUtil extends Str
 {
     protected static function getEmojiRegExp(): string
