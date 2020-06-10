@@ -16,6 +16,6 @@ abstract class AbstractRestApiController extends AbstractController
      */
     protected function getRequestJson(): array
     {
-        return $this->request->getJsonRawBody(true);
+        return $this->request->getJsonRawBody(true) ?: [];
     }
 }
