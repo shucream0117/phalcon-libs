@@ -22,11 +22,11 @@ class ArrayLength extends AbstractCustomValidationRule
     protected function checkValue($value): bool
     {
         $count = count($value);
+
         $equal = $this->getOption('equal');
         if (is_int($equal)) {
             return $count === $equal;
         }
-
         $max = $this->getOption('max');
         if (is_int($max) && ($max < $count)) {
             return false;
@@ -35,5 +35,7 @@ class ArrayLength extends AbstractCustomValidationRule
         if (is_int($min) && ($count < $min)) {
             return false;
         }
+
+        return true;
     }
 }
