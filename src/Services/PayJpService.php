@@ -230,6 +230,43 @@ class PayJpService extends AbstractService
     }
 
     /**
+     * 支払い情報を取得
+     *
+     * @param string $chargeId
+     * @return Charge|null
+     * @throws InvalidApiResponseFormatException
+     * @throws PayJpErrorBase
+     */
+    public function getChargeById(string $chargeId): ?Charge
+    {
+        try {
+            return Charge::retrieve($chargeId);
+        } catch (PayJpErrorBase $e) {
+            $error = PayJpError::createFromThrownError($e);
+            if ($error->is(PayJpError::INVALID_ID)) {
+                return null;
+            }
+            throw $e; // 対象が存在しないエラーではない場合、異常なので投げ直す
+        }
+    }
+
+    /**
+     * 支払いを確定する
+     *
+     * @param Charge $charge
+     * @return Charge
+     * @throws PayJpErrorBase
+     */
+    public function capture(Charge $charge): Charge
+    {
+        try {
+            return $charge->capture();
+        } catch (PayJpErrorBase $e) {
+            throw $e;
+        }
+    }
+
+    /**
      * 返金する
      *
      * @param Charge $charge
