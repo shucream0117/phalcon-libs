@@ -64,7 +64,7 @@ class PayJpService extends AbstractService
     private function createCustomer($userId): Customer
     {
         try {
-            Customer::create(['id' => $userId]);
+            return Customer::create(['id' => $userId]);
         } catch (PayJpErrorBase $e) {
             throw $e;
         }
