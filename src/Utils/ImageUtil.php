@@ -20,7 +20,7 @@ class ImageUtil
         $width = $image->getWidth();
         $height = $image->getHeight();
         if ($maxSizePx < $width || $maxSizePx < $height) {
-            $image->resize($maxSizePx, $maxSizePx, (0 <= ($width - $height)) ? Enum::WIDTH : Enum::HEIGHT);
+            $image = $image->resize($maxSizePx, $maxSizePx, (0 <= ($width - $height)) ? Enum::WIDTH : Enum::HEIGHT);
         }
         return $image;
     }
