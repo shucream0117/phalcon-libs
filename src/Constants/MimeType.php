@@ -25,7 +25,7 @@ class MimeType
      * @param string $b
      * @return bool
      */
-    public static function isSame(string $a, string $b): bool
+    public static function isEqual(string $a, string $b): bool
     {
         return strtolower($a) === strtolower($b);
     }
