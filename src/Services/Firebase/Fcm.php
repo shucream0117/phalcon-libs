@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Shucream0117\PhalconLib\Services\Firebase;
 
 use GuzzleHttp\Client;
-use Shucream0117\PhalconLib\Constants\ContentType;
 use Shucream0117\PhalconLib\Constants\MimeType;
 use Shucream0117\PhalconLib\Entities\Firebase\Payload;
 use Shucream0117\PhalconLib\Exceptions\FcmTokenExpiredException;
