@@ -31,7 +31,7 @@ abstract class AbstractRepository
      * 保存
      *
      * @param ModelInterface $model
-     * @throws Throwable
+     * @throws Throwable|AbstractRuntimeException|AbstractException
      */
     protected function save(ModelInterface $model): void
     {
@@ -52,7 +52,7 @@ abstract class AbstractRepository
      * @param string[] $whiteList
      * @param bool $boolToInt
      * @return ModelInterface
-     * @throws Throwable
+     * @throws Throwable|AbstractRuntimeException|AbstractException
      */
     public function update(ModelInterface $model, array $data, array $whiteList = [], bool $boolToInt = true): ModelInterface
     {
@@ -75,7 +75,7 @@ abstract class AbstractRepository
      * 削除
      *
      * @param ModelInterface $model
-     * @throws Throwable
+     * @throws Throwable|AbstractRuntimeException|AbstractException
      */
     public function delete(ModelInterface $model): void
     {
