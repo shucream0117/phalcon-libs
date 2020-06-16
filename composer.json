@@ -18,7 +18,8 @@
     "robinvdvleuten/ulid": "^4.0",
     "aws/aws-sdk-php": "^3.137",
     "abraham/twitteroauth": "^1.1",
-    "payjp/payjp-php": "^1.1"
+    "payjp/payjp-php": "^1.1",
+    "ext-pdo": "*"
   },
   "require-dev": {
     "phalcon/ide-stubs": "^4.0",
