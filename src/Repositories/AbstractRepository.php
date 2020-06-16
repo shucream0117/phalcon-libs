@@ -7,6 +7,8 @@ namespace Shucream0117\PhalconLib\Repositories;
 use PDOException;
 use Phalcon\Messages\MessageInterface;
 use Phalcon\Mvc\ModelInterface;
+use Shucream0117\PhalconLib\Exceptions\AbstractException;
+use Shucream0117\PhalconLib\Exceptions\AbstractRuntimeException;
 use Throwable;
 
 abstract class AbstractRepository
@@ -21,7 +23,7 @@ abstract class AbstractRepository
      * 共通処理(save/update/delete) で失敗時にスローする例外を作る
      *
      * @param string $message
-     * @return Throwable
+     * @return Throwable|AbstractRuntimeException|AbstractException
      */
     abstract protected static function createDatabaseException(string $message = ''): Throwable;
 
@@ -77,8 +79,13 @@ abstract class AbstractRepository
      */
     public function delete(ModelInterface $model): void
     {
-        if (!$model->delete()) {
-            throw static::createDatabaseException('failed to delete record');
+        try {
+            if (!$model->delete()) {
+                $message = $this->generateDatabaseErrorMessageFromModel($model) ?: 'failed to delete record';
+                throw static::createDatabaseException($message);
+            }
+        } catch (PDOException $e) {
+            throw static::createDatabaseException($e->getMessage());
         }
     }
 }
