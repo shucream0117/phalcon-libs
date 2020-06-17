@@ -6,6 +6,7 @@ namespace Shucream0117\PhalconLib\Services\Aws;
 
 use Aws\Result;
 use Aws\S3\S3Client;
+use Exception;
 
 class S3Service
 {
@@ -68,7 +69,7 @@ class S3Service
         string $bucket,
         string $filePath,
         string $contentType,
-        ?string $acl = S3::ACL_PRIVATE
+        ?string $acl = self::ACL_PRIVATE
     ): void {
         $this->saveToS3($data, $bucket, $filePath, $contentType, $acl, static::STORAGE_CLASS_STANDARD);
     }
@@ -88,7 +89,7 @@ class S3Service
         string $bucket,
         string $filePath,
         string $contentType,
-        ?string $acl = S3::ACL_PRIVATE
+        ?string $acl = self::ACL_PRIVATE
     ): void {
         $this->saveToS3($encodedImage, $bucket, $filePath, $contentType, $acl, static::STORAGE_CLASS_STANDARD_IA);
     }
