@@ -8,7 +8,7 @@ use Aws\Result;
 use Aws\S3\S3Client;
 use Exception;
 
-class S3Service
+class S3
 {
     const STORAGE_CLASS_STANDARD = 'STANDARD'; // 標準
     const STORAGE_CLASS_STANDARD_IA = 'STANDARD_IA'; // 標準低頻度
