@@ -19,7 +19,7 @@ class S3
 
     private S3Client $client;
 
-    private function __construct(S3Client $client)
+    public function __construct(S3Client $client)
     {
         $this->client = $client;
     }
