@@ -62,6 +62,7 @@ class S3
      * @param string $filePath
      * @param string $contentType
      * @param string|null $acl
+     * @return Result
      * @throws Exception
      */
     public function saveToS3StorageClassStandard(
@@ -70,8 +71,8 @@ class S3
         string $filePath,
         string $contentType,
         ?string $acl = self::ACL_PRIVATE
-    ): void {
-        $this->saveToS3($data, $bucket, $filePath, $contentType, $acl, static::STORAGE_CLASS_STANDARD);
+    ): Result {
+        return $this->saveToS3($data, $bucket, $filePath, $contentType, $acl, static::STORAGE_CLASS_STANDARD);
     }
 
     /**
@@ -82,6 +83,7 @@ class S3
      * @param string $filePath
      * @param string $contentType
      * @param string|null $acl
+     * @return Result
      * @throws Exception
      */
     public function saveToS3StorageClassStandardIA(
@@ -90,8 +92,8 @@ class S3
         string $filePath,
         string $contentType,
         ?string $acl = self::ACL_PRIVATE
-    ): void {
-        $this->saveToS3($encodedImage, $bucket, $filePath, $contentType, $acl, static::STORAGE_CLASS_STANDARD_IA);
+    ): Result {
+        return $this->saveToS3($encodedImage, $bucket, $filePath, $contentType, $acl, static::STORAGE_CLASS_STANDARD_IA);
     }
 
     /**
@@ -119,10 +121,10 @@ class S3
      * @param string $prefix
      * @throws Exception
      */
-    public function deleteFromS3ByPrefix(string $bucket, string $prefix): void
+    public function deleteFromS3ByPrefix(string $bucket, string $prefix): Result
     {
         $targetKeys = $this->getFilePathListByPrefix($bucket, $prefix);
-        $this->delete($bucket, $targetKeys);
+        return $this->delete($bucket, $targetKeys);
     }
 
     /**
