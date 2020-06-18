@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shucream0117\PhalconLib\Utils;
 
 use Phalcon\Helper\Str;
+use Phalcon\Security\Random;
 
 /**
  * 親クラスに関してstubが仕事していない部分があるのでここで補完しておく
@@ -62,5 +63,15 @@ class StringUtil extends Str
     public static function removePlusSectionFromEmail(string $email): string
     {
         return preg_replace('/\+.*@/', '@', $email);
+    }
+
+    /**
+     * 記号を使用しないA‐Z、a‐z、0‐9のランダムな組み合わせを返す
+     * @param int $length
+     * @return string
+     */
+    public static function getRandomBase62(int $length): string
+    {
+        return (new Random())->base62($length);
     }
 }
