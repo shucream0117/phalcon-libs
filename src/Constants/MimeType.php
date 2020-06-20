@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shucream0117\PhalconLib\Constants;
 
+use InvalidArgumentException;
+
 class MimeType
 {
     const JPEG = 'image/jpeg';
@@ -18,6 +20,19 @@ class MimeType
     const WEBM = 'video/webm';
 
     const JSON = 'application/json';
+
+    protected const EXT_MAP = [
+        self::JPEG => 'jpg',
+        self::PNG => 'png',
+        self::GIF => 'gif',
+        self::WEBP => 'webp',
+        self::SVG => 'svg',
+        self::BMP => 'bmp',
+        self::MP4 => 'mp4',
+        self::MOV => 'mov',
+        self::WEBM => 'webm',
+        self::JSON => 'json',
+    ];
 
     /**
      * 大文字小文字の決まりがないため、比較メソッドを用意
@@ -41,5 +56,20 @@ class MimeType
     {
         $mimeTypes = array_map(fn(string $m) => strtolower($m), $mimeTypes);
         return in_array(strtolower($mimeType), $mimeTypes);
+    }
+
+    /**
+     * MimeTypeに対応する拡張子を返す
+     * 
+     * @param string $mimeType
+     * @param bool $uppercase
+     * @return string
+     */
+    public static function mimeToExtension(string $mimeType, bool $uppercase = false): string
+    {
+        if ($ext = (self::EXT_MAP[$mimeType] ?? null)) {
+            return $uppercase? strtoupper($ext) : $ext;
+        }
+        throw new InvalidArgumentException("invalid mime {$mimeType} is given");
     }
 }
