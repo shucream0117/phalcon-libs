@@ -60,7 +60,7 @@ class MimeType
 
     /**
      * MimeTypeに対応する拡張子を返す
-     * 
+     *
      * @param string $mimeType
      * @param bool $uppercase
      * @return string
