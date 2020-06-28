@@ -9,6 +9,25 @@ use InvalidArgumentException;
 use Phalcon\Cli\Console;
 use Throwable;
 
+/*
+ * Taskを起動するためのクラス。
+ * executor.php のようなファイルを作成し、その中でConsoleクラスのインスタンスを初期化して、
+ * TaskExecutor::execute の引数に渡す。
+ *
+ * 例えばTasks/UserTaskを起動する場合、
+ * php app/Tasks/executor.php UserTask arg1 arg2... というコマンドを発行する。
+ *
+ * Tasks/QueueProcessors/UserTask のようにTasks下で更にディレクトリ配下にあるクラスを実行する場合は、
+ * php app/Tasks/executor.php QueueProcessors\\UserTask とする。
+ *
+ * タスク名の指定は、 User または UserTask どちらでも有効。
+ * 実行するTaskクラスは全てAbstractTaskのサブクラスである必要がある。
+ *
+ * https://docs.phalcon.io/4.0/ja-jp/application-cli
+ * PhalconのCliアプリケーションのドキュメントをベースに実装したが、
+ * actionをmainに固定するなど、多少シンプルになるように改変しているので注意。
+ *
+ */
 class TaskExecutor
 {
     /**
