@@ -12,6 +12,7 @@ use Interop\Queue\Exception;
 use Interop\Queue\Exception\DeliveryDelayNotSupportedException;
 use Interop\Queue\Exception\InvalidDestinationException;
 use Interop\Queue\Exception\InvalidMessageException;
+use Shucream0117\PhalconLib\Entities\AbstractQueueProperty;
 use Shucream0117\PhalconLib\Services\AbstractService;
 
 /**
@@ -26,12 +27,13 @@ abstract class AbstractQueueManager extends AbstractService
      * 普通のキューとして詰む
      *
      * @param string $queueName
-     * @param array $data
+     * @param AbstractQueueProperty $data
+     * @throws DeliveryDelayNotSupportedException
      * @throws Exception
      * @throws InvalidDestinationException
      * @throws InvalidMessageException
      */
-    public function enqueue(string $queueName, array $data): void
+    public function enqueue(string $queueName, AbstractQueueProperty $data): void
     {
         $this->send($queueName, $data, null);
     }
@@ -41,28 +43,28 @@ abstract class AbstractQueueManager extends AbstractService
      * (遅延実行は後続のキュー処理をブロックするため、即時実行キューと混在させないほうが良い)
      *
      * @param string $queueName
-     * @param array $data
+     * @param AbstractQueueProperty $data
      * @param int $delaySec
-     * @throws Exception
      * @throws DeliveryDelayNotSupportedException
+     * @throws Exception
      * @throws InvalidDestinationException
      * @throws InvalidMessageException
      */
-    public function enqueueDelayed(string $queueName, array $data, int $delaySec): void
+    public function enqueueDelayed(string $queueName, AbstractQueueProperty $data, int $delaySec): void
     {
         $this->send($queueName, $data, $delaySec);
     }
 
     /**
      * @param string $queueName
-     * @param array $data
+     * @param AbstractQueueProperty $data
      * @param int|null $delaySec
      * @throws DeliveryDelayNotSupportedException
      * @throws Exception
      * @throws InvalidDestinationException
      * @throws InvalidMessageException
      */
-    private function send(string $queueName, array $data, ?int $delaySec): void
+    private function send(string $queueName, AbstractQueueProperty $data, ?int $delaySec): void
     {
         $context = $this->getOrCreateContext();
         $queue = $context->createQueue($queueName);
@@ -72,7 +74,7 @@ abstract class AbstractQueueManager extends AbstractService
         }
         $producer->send(
             $queue,
-            $context->createMessage('just get properties', $data)
+            $context->createMessage('just get properties', $data->toArray())
         );
     }
 
