@@ -13,9 +13,10 @@ class MediaConvert extends AbstractService
 {
     private MediaConvertClient $client;
 
-    protected const STATUS_PROCESSING = 'PROCESSING';
-    protected const STATUS_ERROR = 'ERROR';
-    protected const STATUS_SUBMITTED = 'SUBMITTED';
+    const STATUS_COMPLETE = 'COMPLETE';
+    const STATUS_PROCESSING = 'PROCESSING';
+    const STATUS_ERROR = 'ERROR';
+    const STATUS_SUBMITTED = 'SUBMITTED';
 
     public function __construct(MediaConvertClient $client)
     {
