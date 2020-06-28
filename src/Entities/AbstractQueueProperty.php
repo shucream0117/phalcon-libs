@@ -13,4 +13,11 @@ abstract class AbstractQueueProperty
     {
         return get_object_vars($this);
     }
+
+    /**
+     * キューワーカーに寄って取り出されたデータをエンティティクラスに変換する氏
+     * @param array $data
+     * @return static
+     */
+    abstract public static function createFromArray(array $data): self;
 }
