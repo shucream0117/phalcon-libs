@@ -20,7 +20,7 @@ class RedisQueueManager extends AbstractQueueManager
         $this->redisInfo = $redisInfo;
     }
 
-    protected function getFactory(): RedisConnectionFactory
+    protected function getContext(): RedisConnectionFactory
     {
         return new RedisConnectionFactory([
             'host' => $this->redisInfo->getHost(),
