@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shucream0117\PhalconLib\Services\QueueManager;
 
 use Enqueue\Redis\RedisConnectionFactory;
+use Interop\Queue\Context;
 use Shucream0117\PhalconLib\Entities\RedisInfo;
 
 /**
@@ -20,12 +21,12 @@ class RedisQueueManager extends AbstractQueueManager
         $this->redisInfo = $redisInfo;
     }
 
-    protected function getContext(): RedisConnectionFactory
+    protected function getContext(): Context
     {
-        return new RedisConnectionFactory([
+        return (new RedisConnectionFactory([
             'host' => $this->redisInfo->getHost(),
             'port' => $this->redisInfo->getPort(),
             'scheme_extensions' => ['phpredis'],
-        ]);
+        ]))->createContext();
     }
 }
