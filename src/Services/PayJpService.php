@@ -10,6 +10,7 @@ use Payjp\Collection;
 use Payjp\Customer;
 use Payjp\Error\Base as PayJpErrorBase;
 use Payjp\Payjp;
+use Payjp\Plan;
 use Shucream0117\PhalconLib\Entities\PayJp\Error as PayJpError;
 use Shucream0117\PhalconLib\Exceptions\InvalidApiResponseFormatException;
 use Shucream0117\PhalconLib\Exceptions\SameCreditCardAlreadyRegisteredException;
@@ -24,29 +25,17 @@ class PayJpService extends AbstractService
     }
 
     /**
-     * @param string|int $userId
-     * @return Customer
-     * @throws InvalidApiResponseFormatException
-     * @throws PayJpErrorBase
-     */
-    public function getOrCreateCustomer($userId): Customer
-    {
-        if ($customer = $this->getCustomerByUserId($userId)) {
-            return $customer;
-        }
-        return $this->createCustomer($userId);
-    }
-
-    /**
-     * @param string|int $userId
+     * IDでCustomerを取得
+     *
+     * @param string $id
      * @return Customer|null
      * @throws InvalidApiResponseFormatException
      * @throws PayJpErrorBase
      */
-    public function getCustomerByUserId($userId): ?Customer
+    public function getCustomerById(string $id): ?Customer
     {
         try {
-            return Customer::retrieve($userId);
+            return Customer::retrieve($id);
         } catch (PayJpErrorBase $e) {
             $error = PayJpError::createFromThrownError($e);
             if ($error->is(PayJpError::INVALID_ID)) {
@@ -57,14 +46,38 @@ class PayJpService extends AbstractService
     }
 
     /**
-     * @param string|int $userId
+     * Customerを作成
+     *
+     * @param string|null $id 指定しない場合はPAY.JP側で自動的に振られる
+     * @param string|null $email
+     * @param string|null $description
+     * @param string|null $cardToken
+     * @param array $metadata
      * @return Customer
      * @throws PayJpErrorBase
      */
-    private function createCustomer($userId): Customer
-    {
+    public function createCustomer(
+        ?string $id = null,
+        ?string $email = null,
+        ?string $description = null,
+        ?string $cardToken = null,
+        array $metadata = []
+    ): Customer {
+        $params = ['metadata' => $metadata];
+        if (!is_null($id)) {
+            $params['id'] = $id;
+        }
+        if (!is_null($email)) {
+            $params['email'] = $email;
+        }
+        if (!is_null($description)) {
+            $params['description'] = $description;
+        }
+        if (!is_null($cardToken)) {
+            $params['card'] = $cardToken;
+        }
         try {
-            return Customer::create(['id' => $userId]);
+            return Customer::create($params);
         } catch (PayJpErrorBase $e) {
             throw $e;
         }
@@ -277,6 +290,91 @@ class PayJpService extends AbstractService
     {
         try {
             return $charge->refund();
+        } catch (PayJpErrorBase $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * 月額プランを作成
+     *
+     * @param int $price
+     * @param int $billingDay 課金日(1〜31) 月によって存在しない日は自動的に月末で処理されるので、31を指定すれば常に月末が課金日になる
+     * @param string|null $name
+     * @param int|null $trialDays
+     * @param array $metadata // 任意のキーバリューデータ
+     * @return Plan
+     * @throws PayJpErrorBase
+     */
+    public function createMonthlyPlan(
+        int $price,
+        int $billingDay,
+        ?string $name = null,
+        ?int $trialDays = null,
+        array $metadata = []
+    ): Plan {
+        return $this->createPlan('month', $price, $billingDay, $name, $trialDays, $metadata);
+    }
+
+    /**
+     * 年間プランを作成
+     *
+     * @param int $price
+     * @param string|null $name
+     * @param int|null $trialDays
+     * @param array $metadata // 任意のキーバリューデータ
+     * @return Plan
+     * @throws PayJpErrorBase
+     */
+    public function createYearlyPlan(
+        int $price,
+        ?string $name = null,
+        ?int $trialDays = null,
+        array $metadata = []
+    ): Plan {
+        return $this->createPlan('year', $price, null, $name, $trialDays, $metadata);
+    }
+
+    /**
+     * @param string $interval
+     * @param int $price
+     * @param int|null $billingDay 課金日(1〜31) 月によって存在しない日は自動的に月末で処理されるので、31を指定すれば常に月末が課金日になる
+     * @param string|null $name
+     * @param int|null $trialDays
+     * @param array $metadata // 任意のキーバリューデータ
+     * @return Plan
+     * @throws PayJpErrorBase
+     */
+    private function createPlan(
+        string $interval,
+        int $price,
+        ?int $billingDay,
+        ?string $name = null,
+        ?int $trialDays = null,
+        array $metadata = []
+    ): Plan {
+        $params = [
+            'interval' => $interval,
+            'amount' => $price,
+            'currency' => self::CURRENCY_JPY,
+            'metadata' => $metadata,
+        ];
+        if (!is_null($billingDay)) {
+            if ($billingDay < 1 || 31 < $billingDay) {
+                throw new \InvalidArgumentException('billingDay should be between 1 and 31');
+            }
+            $params['billing_day'] = $billingDay;
+        }
+
+        if (!is_null($trialDays) && (1 <= $trialDays)) {
+            $params['trial_days'] = $trialDays;
+        }
+        if ($name) {
+            $params['name'] = $name;
+        }
+
+        try {
+            return Plan::create($params);
         } catch (PayJpErrorBase $e) {
             throw $e;
         }
