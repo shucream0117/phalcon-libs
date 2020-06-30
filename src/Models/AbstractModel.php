@@ -8,6 +8,8 @@ use Phalcon\Mvc\Model;
 
 abstract class AbstractModel extends Model
 {
+    const COLUMN_ID = 'id';
+    
     abstract public static function getTableName(): string;
 
     /**

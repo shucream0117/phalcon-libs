@@ -11,6 +11,7 @@ use Payjp\Customer;
 use Payjp\Error\Base as PayJpErrorBase;
 use Payjp\Payjp;
 use Payjp\Plan;
+use Payjp\Subscription;
 use Shucream0117\PhalconLib\Entities\PayJp\Error as PayJpError;
 use Shucream0117\PhalconLib\Exceptions\InvalidApiResponseFormatException;
 use Shucream0117\PhalconLib\Exceptions\SameCreditCardAlreadyRegisteredException;
@@ -375,6 +376,57 @@ class PayJpService extends AbstractService
 
         try {
             return Plan::create($params);
+        } catch (PayJpErrorBase $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Planを取得
+     *
+     * @param string $planId
+     * @return Plan|null
+     * @throws PayJpErrorBase
+     */
+    public function getPlanById(string $planId): ?Plan
+    {
+        try {
+            return Plan::retrieve($planId);
+        } catch (PayJpErrorBase $e) {
+            $error = PayJpError::createFromThrownError($e);
+            if ($error->is(PayJpError::INVALID_ID)) {
+                return null;
+            }
+            throw $e; // 対象が存在しないエラーではない場合、異常なので投げ直す
+        }
+    }
+
+    /**
+     * 定期課金を作成
+     *
+     * @param Customer $customer
+     * @param Plan $plan
+     * @param int|null $trialEndTimestamp 無料期間をいつ終わらせるかのタイムスタンプ。即時課金するにはnull
+     * @param bool $prorate 日割りするかどうか
+     * @param array $metadata
+     * @return Subscription
+     * @throws PayJpErrorBase
+     */
+    public function createSubscription(
+        Customer $customer,
+        Plan $plan,
+        ?int $trialEndTimestamp,
+        bool $prorate,
+        array $metadata = []
+    ): Subscription {
+        try {
+            return Subscription::create([
+                'customer' => $customer['id'],
+                'plan' => $plan['id'],
+                'prorate' => $prorate,
+                'metadata' => $metadata,
+                'trial_end' => $trialEndTimestamp ?: 'now',
+            ]);
         } catch (PayJpErrorBase $e) {
             throw $e;
         }

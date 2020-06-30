@@ -15,7 +15,6 @@ trait UlidTrait
      * @var string
      */
     public $id;
-    public static string $COLUMN_ID = 'id';
 
     public function getId(): string
     {
