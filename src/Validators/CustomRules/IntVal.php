@@ -4,15 +4,12 @@ declare(strict_types=1);
 
 namespace Shucream0117\PhalconLib\Validators\CustomRules;
 
-class IntVal extends AbstractCustomValidationRule
-{
-    protected $template = "Field :field must be int val";
+use Phalcon\Validation\Validator\Numericality;
 
-    protected function checkValue($value): bool
-    {
-        if (is_float($value) || is_bool($value)) {
-            return false;
-        }
-        return filter_var($value, FILTER_VALIDATE_INT, FILTER_FLAG_ALLOW_OCTAL) !== false;
-    }
+/*
+ * 数字であるかどうかを検証する Numericality というバリデータがあるが、
+ * HogeType, HogeVal というバリデーターのネーミングに一貫性を持たせるためにIntValクラスで継承している
+ */
+class IntVal extends Numericality
+{
 }
