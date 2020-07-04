@@ -24,7 +24,6 @@ abstract class AbstractTwitterApiService extends AbstractService
 
     /**
      * /verify_credentials のレスポンスからTwitterUserオブジェクトを生成する。
-     * この共通ライブラリではここは実装しないので、必要に応じて継承先でエンティティを定義する。
      *
      * @param array $data
      * @return AbstractTwitterUser
