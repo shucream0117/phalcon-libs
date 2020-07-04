@@ -5,8 +5,8 @@ FROM php:7.4-cli
 # @see https://github.com/MilesChou/docker-phalcon
 #
 
-ARG PSR_VERSION=0.7.0
-ARG PHALCON_VERSION=4.0.5
+ARG PSR_VERSION=1.0.0
+ARG PHALCON_VERSION=4.0.6
 ARG PHALCON_EXT_PATH=php7/64bits
 
 RUN set -xe && \
