@@ -2,13 +2,12 @@
 
 declare(strict_types=1);
 
-namespace ScannerAppApi\Services;
+namespace Shucream0117\PhalconLib\Services;
 
 use DateTime;
 use Phalcon\Storage\Adapter\AdapterInterface;
 use Shucream0117\PhalconLib\Entities\AuthenticationKey;
 use Shucream0117\PhalconLib\Models\Loginable;
-use Shucream0117\PhalconLib\Services\AbstractService;
 use Shucream0117\PhalconLib\Utils\Date;
 
 abstract class AbstractAuthenticationService extends AbstractService
