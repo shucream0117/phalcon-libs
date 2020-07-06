@@ -6,5 +6,9 @@ namespace Shucream0117\PhalconLib\Models;
 
 interface Loginable
 {
-    public function getId(): string;
+    /**
+     * ログイン主体の識別子(通常はid)を返す
+     * @return string
+     */
+    public function getIdentifier(): string;
 }
