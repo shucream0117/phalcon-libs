@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace Shucream0117\PhalconLib\Repositories;
 
 use PDOException;
+use Phalcon\Di\Injectable;
 use Phalcon\Messages\MessageInterface;
 use Phalcon\Mvc\ModelInterface;
 use Shucream0117\PhalconLib\Exceptions\AbstractException;
 use Shucream0117\PhalconLib\Exceptions\AbstractRuntimeException;
 use Throwable;
 
-abstract class AbstractRepository
+abstract class AbstractRepository extends Injectable
 {
     protected function generateDatabaseErrorMessageFromModel(ModelInterface $model, string $delimiter = ','): string
     {
