@@ -8,6 +8,7 @@ use Google_Client;
 use Google_Exception;
 use Shucream0117\PhalconLib\Entities\Google\AbstractUser as AbstractGoogleUser;
 use Shucream0117\PhalconLib\Entities\Google\AccessToken;
+use Shucream0117\PhalconLib\Exceptions\OAuthException;
 
 abstract class AbstractGoogleApiService extends AbstractService
 {
@@ -63,10 +64,14 @@ abstract class AbstractGoogleApiService extends AbstractService
      * @param string $code
      * @return AccessToken
      * @throws Google_Exception
+     * @throws OAuthException
      */
     public function getAccessToken(string $code): AccessToken
     {
         $token = $this->client->fetchAccessTokenWithAuthCode($code);
+        if (!empty($token['error'])) {
+            throw new OAuthException();
+        }
         return new AccessToken($token);
     }
 
