@@ -59,7 +59,7 @@ abstract class AbstractAuthenticationService extends AbstractService
         $key = $this->createKey($user);
         $this->storage->set(
             $this->createAuthKeyStorageKey($key),
-            $user->getId(),
+            $user->getIdentifier(),
             $this->getAuthKeyTtl()
         );
         if (!$now) {
