@@ -6,7 +6,7 @@ namespace Shucream0117\PhalconLib\Constants;
 
 class Country
 {
-    use ConstantsWithTextTrait;
+    use ConstantsTrait;
 
     const JAPAN = 'japan';
 
