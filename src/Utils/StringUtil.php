@@ -74,4 +74,118 @@ class StringUtil extends Str
     {
         return (new Random())->base62($length);
     }
+
+    public static function removeControlCharacters(string $str, array $exclude = []): string
+    {
+        $controlChars = array_diff(["\r", "\n", "\t", "\f"], $exclude);
+        $imploded = implode('', $controlChars);
+        return preg_replace("/[{$imploded}]/", '', $str);
+    }
+
+    /**
+     * スペース(半角・全角問わず)で分割してリストで返す
+     * @param string $text
+     * @return string[]
+     */
+    public static function explodeBySpace(string $text): array
+    {
+        $sanitized = self::trimSpaces($text);
+        if (empty($sanitized)) {
+            return [];
+        }
+        return preg_split('/[　 ]+/u', $sanitized) ?: [];
+    }
+
+    /**
+     * 文字列前後の空白文字を削る
+     * @param string $text
+     * @param bool $em 全角もトリムするかどうかのフラグ
+     * @return string
+     */
+    public static function trimSpaces(string $text, bool $em = true): string
+    {
+        $trimmed = trim($text);
+        if ($em) {
+            // 先頭の半角、全角スペースを、空文字に置き換える
+            $trimmed = preg_replace('/^[ 　]+/u', '', $trimmed);
+            // 最後の半角、全角スペースを、空文字に置き換える
+            $trimmed = preg_replace('/[ 　]+$/u', '', $trimmed);
+        }
+        return $trimmed;
+    }
+
+    /**
+     * 連続する改行を$maxRepeat個の改行にマージする
+     * @param string $text
+     * @param int $maxRepeat
+     * @param bool $removeHead
+     * @param bool $removeTail
+     * @return string
+     */
+    public static function removeRedundantLineBreaks(
+        string $text,
+        int $maxRepeat = 1,
+        bool $removeHead = true,
+        bool $removeTail = true
+    ): string {
+        $text = str_replace("\r\n", "\n", $text);
+        $num = $maxRepeat + 1;
+        $text = preg_replace("/\n{{$num},}/", "\n", $text);
+        if ($removeHead) {
+            $text = preg_replace("/^\n+/", '', $text);
+        }
+        if ($removeTail) {
+            $text = preg_replace("/\n+$/", '', $text);
+        }
+        return $text;
+    }
+
+    /**
+     * @param string $str
+     * @return string[]
+     */
+    public static function extractUrlString(string $str): array
+    {
+        $pattern = "/(https?:\/\/\S+[-_.!~*\'()a-zA-Z0-9;\/?:@&=+$,%#]+)/";
+        preg_match_all($pattern, $str, $match);
+        $resultTmp = $match ? $match[0] : [];
+
+        $r = [];
+        // 最終的なURLのサニタイズ処理を行う
+        foreach ($resultTmp as $url) {
+            /*
+             * 不要な綴じ括弧がある場合は削る。
+             * (これも正規表現で出来そうだけど一旦妥協します)
+             */
+            if (preg_match('/\)$/', $url)) { // 末尾に閉じ括弧がある場合
+                // 開き括弧と閉じ括弧の数が違うときは、末尾の綴じ括弧を切る
+                if (substr_count($url, '(') !== substr_count($url, ')')) {
+                    $url = preg_replace('/\)$/', '', $url);
+                }
+            }
+            $r[] = $url;
+        }
+        return $r;
+    }
+
+    /**
+     * 文字列がメールアドレスかどうか判定する
+     *
+     * @param string $str
+     * @return bool
+     */
+    public static function isEmailAddress(string $str): bool
+    {
+        // ゆるめの判定
+        return preg_match('/[^@]+@[^@]+/', $str) === 1;
+    }
+
+    /**
+     * @param string $str
+     * @return int
+     */
+    public static function getSizeByte(string $str): int
+    {
+        return strlen($str);
+    }
 }
