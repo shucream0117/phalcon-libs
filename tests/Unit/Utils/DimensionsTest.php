@@ -18,17 +18,17 @@ class DimensionsTest extends TestBase
     }
 
     /**
-     * @dataProvider dataProviderForTestCalcVideoResolution
+     * @dataProvider dataProviderForTestResizeWithSameAspectRatio
      * @param int $height
      * @param int $width
      * @param int $longSideMaxLengthPx
      * @param array $expected
      */
-    public function testAdjustSize(int $height, int $width, int $longSideMaxLengthPx, array $expected)
+    public function testResizeWithSameAspectRatio(int $height, int $width, int $longSideMaxLengthPx, array $expected)
     {
         $dimensions = new Dimensions($width, $height);
 
-        $resized = $dimensions->adjustSize($longSideMaxLengthPx);
+        $resized = $dimensions->resizeWithSameAspectRatio($longSideMaxLengthPx);
         $this->assertSame($expected['height'], $resized->getHeight());
         $this->assertSame($expected['width'], $resized->getWidth());
     }
@@ -37,7 +37,7 @@ class DimensionsTest extends TestBase
      * testAdjustSize のバリデーター
      * @return array
      */
-    public function dataProviderForTestCalcVideoResolution(): array
+    public function dataProviderForTestResizeWithSameAspectRatio(): array
     {
         return [
             [1920, 1080, 1920, ['height' => 1920, 'width' => 1080]],

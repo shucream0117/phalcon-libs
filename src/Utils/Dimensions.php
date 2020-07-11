@@ -41,7 +41,7 @@ class Dimensions
      * @param int $longSideLength
      * @return $this
      */
-    public function adjustSize(int $longSideLength): self
+    public function resizeWithSameAspectRatio(int $longSideLength): self
     {
         $currentHeight = $this->getHeight();
         $currentWidth = $this->getWidth();
