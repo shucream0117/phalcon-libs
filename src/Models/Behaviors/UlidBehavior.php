@@ -14,7 +14,7 @@ class UlidBehavior extends Behavior
     public function notify(string $eventType, ModelInterface $model)
     {
         if ($eventType === 'beforeValidationOnCreate') {
-            $idFieldName = AbstractModel::COLUMN_ID;
+            $idFieldName = AbstractModel::$COLUMN_ID;
             if (!isset($model->{$idFieldName})) {
                 $model->assign([$idFieldName => Ulid::generate()->__toString()]);
             }
