@@ -34,12 +34,23 @@ class MediaConvert extends AbstractService
 
     /**
      * @param string $jobId
-     * @throws InvalidApiResponseFormatException
+     * @return Result
      */
-    public function getEncodingStatus(string $jobId): string
+    public function getJobById(string $jobId): Result
     {
-        $job = $this->client->getJob(['Id' => $jobId]);
-        if (!$jobStatus = ($job->get('Job')['Status'] ?? null)) {
+        if ($result = $this->client->getJob(['Id' => $jobId])) {
+            return $result;
+        }
+        throw new InvalidApiResponseFormatException();
+    }
+
+    /**
+     * @param Result $result
+     * @return string
+     */
+    public function getEncodingStatusFromResultObject(Result $result): string
+    {
+        if (!$jobStatus = ($result->get('Job')['Status'] ?? null)) {
             throw new InvalidApiResponseFormatException('key=Job.Status is not found in the response');
         }
         return $jobStatus;
