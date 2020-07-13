@@ -5,10 +5,22 @@ declare(strict_types=1);
 namespace Shucream0117\PhalconLib\Services;
 
 use GuzzleHttp\Client;
-use Shucream0117\PhalconLib\Constants\ContentType;
+use Shucream0117\PhalconLib\Constants\MimeType;
 
 class Imgix
 {
+    const FIT_CROP = 'crop';
+    const FIT_CLIP = 'clip';
+    const FIT_MAX = 'max';
+
+    const FORMAT_JPG = 'jpg';
+    const FORMAT_PNG = 'png';
+    const FORMAT_GIF = 'gif';
+    const FORMAT_WEBP = 'webp';
+
+    const FORMAT_MP4 = 'mp4';
+    const FORMAT_WEBM = 'webm';
+
     private string $apiKey;
     private Client $client;
 
@@ -36,7 +48,7 @@ class Imgix
             return;
         }
         $this->client->post(static::PURGER_API_ENDPOINT, [
-            'headers' => ['ContentType' => ContentType::JSON],
+            'headers' => ['ContentType' => MimeType::JSON],
             'json' => ['url' => $url],
             'auth' => [$this->apiKey, ''],
         ]);
