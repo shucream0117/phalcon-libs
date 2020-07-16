@@ -309,7 +309,7 @@ class PayJpService extends AbstractService
      */
     public function createMonthlyPlan(
         int $price,
-        int $billingDay,
+        ?int $billingDay,
         ?string $name = null,
         ?int $trialDays = null,
         array $metadata = []
