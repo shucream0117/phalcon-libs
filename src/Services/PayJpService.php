@@ -402,6 +402,26 @@ class PayJpService extends AbstractService
     }
 
     /**
+     * 定期課金情報を取得
+     *
+     * @param string $subscriptionId
+     * @return Subscription
+     * @throws PayJpErrorBase
+     */
+    public function getSubscriptionById(string $subscriptionId): ?Subscription
+    {
+        try {
+            return Subscription::retrieve($subscriptionId);
+        } catch (PayJpErrorBase $e) {
+            $error = PayJpError::createFromThrownError($e);
+            if ($error->is(PayJpError::INVALID_ID)) {
+                return null;
+            }
+            throw $e; // 対象が存在しないエラーではない場合、異常なので投げ直す
+        }
+    }
+
+    /**
      * 定期課金を作成
      *
      * @param Customer $customer
@@ -450,7 +470,7 @@ class PayJpService extends AbstractService
 
     /**
      * 定期課金を再開
-     * 
+     *
      * @param Subscription $subscription
      * @param int|null $trialEndTimestamp
      * @param bool $prorate
