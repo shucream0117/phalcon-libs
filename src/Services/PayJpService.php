@@ -20,6 +20,32 @@ class PayJpService extends AbstractService
 {
     const CURRENCY_JPY = 'jpy';
 
+    const WEBHOOK_EVENT_TYPE_CHARGE_SUCCEEDED = 'charge.succeeded';
+    const WEBHOOK_EVENT_TYPE_CHARGE_FAILED = 'charge.failed';
+    const WEBHOOK_EVENT_TYPE_CHARGE_UPDATED = 'charge.updated';
+    const WEBHOOK_EVENT_TYPE_CHARGE_REFUNDED = 'charge.refunded';
+    const WEBHOOK_EVENT_TYPE_CHARGE_CAPTURED = 'charge.captured';
+    const WEBHOOK_EVENT_TYPE_TOKEN_CREATED = 'token.created	';
+    const WEBHOOK_EVENT_TYPE_CUSTOMER_CREATED = 'customer.created';
+    const WEBHOOK_EVENT_TYPE_CUSTOMER_UPDATED = 'customer.updated	';
+    const WEBHOOK_EVENT_TYPE_CUSTOMER_DELETED = 'customer.deleted';
+    const WEBHOOK_EVENT_TYPE_CUSTOMER_CARD_CREATED = 'customer.card.created';
+    const WEBHOOK_EVENT_TYPE_CUSTOMER_CARD_UPDATED = 'customer.card.updated';
+    const WEBHOOK_EVENT_TYPE_CUSTOMER_CARD_DELETED = 'customer.card.deleted';
+    const WEBHOOK_EVENT_TYPE_PLAN_CREATED = 'plan.created';
+    const WEBHOOK_EVENT_TYPE_PLAN_UPDATED = 'plan.updated';
+    const WEBHOOK_EVENT_TYPE_PLAN_DELETED = 'plan.deleted';
+    const WEBHOOK_EVENT_TYPE_SUBSCRIPTION_CREATED = 'subscription.created';
+    const WEBHOOK_EVENT_TYPE_SUBSCRIPTION_UPDATED = 'subscription.updated';
+    const WEBHOOK_EVENT_TYPE_SUBSCRIPTION_DELETED = 'subscription.deleted';
+    const WEBHOOK_EVENT_TYPE_SUBSCRIPTION_PAUSED = 'subscription.paused';
+    const WEBHOOK_EVENT_TYPE_SUBSCRIPTION_RESUMED = 'subscription.resumed';
+    const WEBHOOK_EVENT_TYPE_SUBSCRIPTION_CANCELED = 'subscription.canceled';
+    const WEBHOOK_EVENT_TYPE_SUBSCRIPTION_RENEWED = 'subscription.renewed';
+    const WEBHOOK_EVENT_TYPE_TRANSFER_SUCCEEDED = 'transfer.succeeded';
+    const WEBHOOK_EVENT_TYPE_TENANT_UPDATED = 'tenant.updated';
+
+
     public function __construct(string $apiKey)
     {
         Payjp::setApiKey($apiKey);
