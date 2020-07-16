@@ -431,4 +431,79 @@ class PayJpService extends AbstractService
             throw $e;
         }
     }
+
+    /**
+     * 定期課金を一時停止
+     *
+     * @param Subscription $subscription
+     * @return Subscription
+     * @throws PayJpErrorBase
+     */
+    public function pauseSubscription(Subscription $subscription): Subscription
+    {
+        try {
+            return $subscription->pause();
+        } catch (PayJpErrorBase $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * 定期課金を再開
+     * 
+     * @param Subscription $subscription
+     * @param int|null $trialEndTimestamp
+     * @param bool $prorate
+     * @return Subscription
+     * @throws PayJpErrorBase
+     */
+    public function resumeSubscription(
+        Subscription $subscription,
+        ?int $trialEndTimestamp,
+        bool $prorate
+    ): Subscription {
+        try {
+            return $subscription->resume([
+                'prorate' => $prorate,
+                'trial_end' => $trialEndTimestamp ?: 'now',
+            ]);
+        } catch (PayJpErrorBase $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * 定期課金をキャンセル(現在の周期の終了日をもって定期課金を終了させる)
+     *
+     * @param Subscription $subscription
+     * @return Subscription
+     * @throws PayJpErrorBase
+     */
+    public function cancelSubscription(Subscription $subscription): Subscription
+    {
+        try {
+            return $subscription->cancel();
+        } catch (PayJpErrorBase $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * 終了日を待たずに直ちに定期課金を削除する。
+     *
+     * @param Subscription $subscription
+     * @param bool $prorate 日割りで残額返金するかどうか
+     * @return Subscription
+     * @throws PayJpErrorBase
+     */
+    public function forceDeleteSubscription(Subscription $subscription, bool $prorate): Subscription
+    {
+        try {
+            return $subscription->delete([
+                'prorate' => $prorate,
+            ]);
+        } catch (PayJpErrorBase $e) {
+            throw $e;
+        }
+    }
 }
