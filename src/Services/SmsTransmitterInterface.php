@@ -8,5 +8,5 @@ use Shucream0117\PhalconLib\Entities\PhoneNumber;
 
 interface SmsTransmitterInterface
 {
-    public function send(PhoneNumber $phoneNumber, string $message): string;
+    public function send(PhoneNumber $phoneNumber, string $message);
 }
