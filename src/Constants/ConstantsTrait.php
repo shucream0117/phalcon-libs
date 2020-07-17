@@ -32,7 +32,7 @@ trait ConstantsTrait
 
     public static function getAsList(): array
     {
-        return empty(static::$text) ? [] : array_keys(static::$text);
+        return array_values(self::getAsAssocArray());
     }
 
     /**
