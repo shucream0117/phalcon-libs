@@ -25,6 +25,7 @@ class CorsMiddleware implements MicroMiddlewareInterface
                 'Content-Disposition, Content-Type, Authorization'
             )
             ->setHeader('Access-Control-Allow-Credentials', 'true');
+        return true;
     }
 
     public function call(Micro $application)

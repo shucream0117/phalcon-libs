@@ -98,7 +98,7 @@ trait JsonResponseTrait
     {
         return $this->createResponse(StatusCode::HTTP_SERVICE_UNAVAILABLE, $content);
     }
-    
+
     protected function createResponse(
         int $statusCode,
         ?JsonSerializable $content = null,
