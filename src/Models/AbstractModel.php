@@ -9,7 +9,7 @@ use Phalcon\Mvc\Model;
 abstract class AbstractModel extends Model
 {
     public static string $COLUMN_ID = 'id';
-    
+
     abstract public static function getTableName(): string;
 
     /**
@@ -25,5 +25,17 @@ abstract class AbstractModel extends Model
      */
     public function onConstruct(): void
     {
+    }
+
+    /**
+     * getTableName()ではなく、クラス名で解決される
+     * @param string $columnName
+     * @param string|null $alias
+     * @return string
+     */
+    public static function getFullyQualifiedColumnName(string $columnName, ?string $alias = null): string
+    {
+        $tableName = $alias ?: static::class;
+        return "{$tableName}.{$columnName}";
     }
 }
