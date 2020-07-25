@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shucream0117\PhalconLib\Validators\CustomRules;
 
-class IntList extends AbstractCustomValidationRule
+class IntList extends AbstractTypeRule
 {
     protected $template = "Field :field must be list of int values";
 

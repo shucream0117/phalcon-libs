@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shucream0117\PhalconLib\Validators\CustomRules;
 
-class BoolType extends AbstractCustomValidationRule
+class BoolType extends AbstractTypeRule
 {
     protected $template = "Field :field must be bool type";
 
