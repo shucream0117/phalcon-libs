@@ -20,6 +20,13 @@ class PayJpService extends AbstractService
 {
     const CURRENCY_JPY = 'jpy';
 
+    const BRAND_VISA = 'Visa';
+    const BRAND_MASTER_CARD = 'MasterCard';
+    const BRAND_JCB = 'JCB';
+    const BRAND_AMERICAN_EXPRESS = 'American Express';
+    const BRAND_DINERS_CLUB = 'Diners Club';
+    const BRAND_DISCOVER = 'Discover';
+
     const WEBHOOK_EVENT_TYPE_CHARGE_SUCCEEDED = 'charge.succeeded';
     const WEBHOOK_EVENT_TYPE_CHARGE_FAILED = 'charge.failed';
     const WEBHOOK_EVENT_TYPE_CHARGE_UPDATED = 'charge.updated';
