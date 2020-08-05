@@ -9,6 +9,13 @@ use DateTime;
 
 class Date
 {
+    private static ?DateTimeZone $defaultTimezone = null;
+
+    public static function setDefaultTimezone(DateTimeZone $tz): void
+    {
+        static::$defaultTimezone = $tz;
+    }
+
     /**
      * ミリ秒
      * @return int
@@ -24,6 +31,9 @@ class Date
      */
     public static function getDefaultTimezone(): DateTimeZone
     {
+        if (static::$defaultTimezone) {
+            return static::$defaultTimezone;
+        }
         return new DateTimeZone('UTC');
     }
 
