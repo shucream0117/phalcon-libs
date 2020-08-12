@@ -14,4 +14,9 @@ abstract class AbstractTask extends Task
     {
         $this->run();
     }
+
+    protected function getParams(): array
+    {
+        return $this->dispatcher->getParams();
+    }
 }
