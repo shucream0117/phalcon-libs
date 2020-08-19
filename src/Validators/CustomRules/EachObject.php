@@ -12,12 +12,16 @@ use Shucream0117\PhalconLib\Validators\ValidationRuleSet;
 /*
  * [
  *   "params" => [ // バリデーション対象の連想配列のリスト
- *     ["hoge"=>"fuga", "piyo"=>1]
+ *     ["name"=>"fuga", "age"=>10]
  *   ],
  *   "rule_sets" => [
  *     new ValidationRuleSet('name', [
  *       new PresenceOf($this->optionCancelOnFail()),
  *       new StringType($this->optionCancelOnFail()),
+ *     ]),
+ *       new ValidationRuleSet('age', [
+ *       new PresenceOf($this->optionCancelOnFail()),
+ *       new IntType($this->optionCancelOnFail()),
  *     ]),
  *   ]
  * ]
@@ -40,8 +44,13 @@ class EachObject extends Validation\Validator\Callback
                     return parent::validate($params, $rules);
                 }
             };
-            $result = $validator->validate($params, $ruleSetList);
-            return empty($result->getErrors());
+            foreach ($params as $p) {
+                $result = $validator->validate($p, $ruleSetList);
+                if ($result->getErrors()) {
+                    return false;
+                }
+            }
+            return true;
         };
         parent::__construct($options);
     }
