@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Shucream0117\PhalconLib\Services;
+namespace Shucream0117\PhalconLib\Services\Google;
 
 use Google_Client;
 use Google_Exception;
@@ -10,9 +10,6 @@ use Shucream0117\PhalconLib\Entities\Google\AbstractUser as AbstractGoogleUser;
 use Shucream0117\PhalconLib\Entities\Google\AccessToken;
 use Shucream0117\PhalconLib\Exceptions\OAuthException;
 
-/**
- * @deprecated \Shucream0117\PhalconLib\Services\Google の方を使う
- */
 abstract class AbstractGoogleApiService extends AbstractService
 {
     private Google_Client $client;
