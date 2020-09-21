@@ -67,7 +67,7 @@ class MimeType
      */
     public static function mimeToExtension(string $mimeType, bool $uppercase = false): string
     {
-        if ($ext = (self::EXT_MAP[$mimeType] ?? null)) {
+        if ($ext = (self::EXT_MAP[strtolower($mimeType)] ?? null)) {
             return $uppercase? strtoupper($ext) : $ext;
         }
         throw new InvalidArgumentException("invalid mime {$mimeType} is given");
