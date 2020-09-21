@@ -58,8 +58,9 @@ class Imgix
     public static function createUrlBuilder(
         string $domain,
         bool $useHttps = true,
-        string $signatureToken = ''
+        string $signatureToken = '',
+        bool $includeLibParam = false
     ): UrlBuilder {
-        return new UrlBuilder($domain, $useHttps, $signatureToken);
+        return new UrlBuilder($domain, $useHttps, $signatureToken, $includeLibParam);
     }
 }
