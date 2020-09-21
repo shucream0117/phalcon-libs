@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shucream0117\PhalconLib\Services;
 
 use GuzzleHttp\Client;
+use Imgix\UrlBuilder;
 use Shucream0117\PhalconLib\Constants\MimeType;
 
 class Imgix
@@ -52,5 +53,13 @@ class Imgix
             'json' => ['url' => $url],
             'auth' => [$this->apiKey, ''],
         ]);
+    }
+
+    public static function createUrlBuilder(
+        string $domain,
+        bool $useHttps = true,
+        string $signatureToken = ''
+    ): UrlBuilder {
+        return new UrlBuilder($domain, $useHttps, $signatureToken);
     }
 }
