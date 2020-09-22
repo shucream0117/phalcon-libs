@@ -10,6 +10,7 @@ use Shucream0117\PhalconLib\Entities\Twitter\AbstractUser as AbstractTwitterUser
 use Shucream0117\PhalconLib\Entities\Twitter\AccessToken;
 use Shucream0117\PhalconLib\Entities\Twitter\AccountSetting;
 use Shucream0117\PhalconLib\Entities\Twitter\RequestToken;
+use Shucream0117\PhalconLib\Utils\Json;
 
 abstract class AbstractTwitterApiService extends AbstractService
 {
@@ -80,12 +81,13 @@ abstract class AbstractTwitterApiService extends AbstractService
     public function verifyCredentials(AccessToken $accessToken): AbstractTwitterUser
     {
         $this->setAccessToken($accessToken);
-        $result = (array)$this->oauth->get('account/verify_credentials', [
+        $result = $this->oauth->get('account/verify_credentials', [
             'include_email' => true,
             'skip_status' => true,
             'include_entities' => false,
         ]);
-        return static::createFromCredentialResponse($result);
+        // 再帰的にarrayにキャストするために横着してJsonへのエンコードとデコードを行き来しています
+        return static::createFromCredentialResponse(Json::decode(Json::encode($result)));
     }
 
     /**
