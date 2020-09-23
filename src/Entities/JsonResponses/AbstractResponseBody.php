@@ -16,6 +16,8 @@ abstract class AbstractResponseBody extends Injectable implements JsonSerializab
      */
     protected static array $objectTypeFields = [];
 
+    private array $excludedKeys = ['excludedKeys', 'container'];
+
     /**
      * @return array|stdClass
      */
@@ -23,6 +25,10 @@ abstract class AbstractResponseBody extends Injectable implements JsonSerializab
     {
         if (!$vars = get_object_vars($this)) {
             return new stdClass();
+        }
+
+        foreach ($this->excludedKeys as $k) {
+            unset($vars[$k]);
         }
 
         if (!static::$objectTypeFields) {
