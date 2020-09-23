@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace Shucream0117\PhalconLib\Entities\JsonResponses;
 
 use JsonSerializable;
+use Phalcon\Di\Injectable;
 use stdClass;
 
-abstract class AbstractResponseBody implements JsonSerializable
+abstract class AbstractResponseBody extends Injectable implements JsonSerializable
 {
     /**
      * 空配列のときにもJSONのオブジェクト形式で返却したいフィールド名を列挙する
