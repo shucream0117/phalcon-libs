@@ -11,17 +11,17 @@ use Shucream0117\PhalconLib\Utils\StringUtil;
 class AppleDeveloperApiService extends AbstractService
 {
     private string $sharedSecret;
-    private Client $httpClient;
     private bool $isSandbox;
+    private Client $httpClient;
 
     private const SANDBOX_API_URL = 'https://sandbox.itunes.apple.com';
     private const PRODUCTION_API_URL = 'https://buy.itunes.apple.com';
 
-    public function __construct(string $sharedSecret, ?Client $httpClient = null, bool $isSandbox = true)
+    public function __construct(string $sharedSecret, bool $isSandbox = true, ?Client $httpClient = null)
     {
         $this->sharedSecret = $sharedSecret;
-        $this->httpClient = is_null($httpClient) ? new Client() : $httpClient;
         $this->isSandbox = $isSandbox;
+        $this->httpClient = is_null($httpClient) ? new Client() : $httpClient;
     }
 
     /**
