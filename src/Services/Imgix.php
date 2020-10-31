@@ -27,10 +27,10 @@ class Imgix
 
     protected const PURGER_API_ENDPOINT = 'https://api.imgix.com/v2/image/purger';
 
-    public function __construct(string $apiKey, Client $client)
+    public function __construct(string $apiKey, ?Client $client = null)
     {
         $this->apiKey = $apiKey;
-        $this->client = $client;
+        $this->client = $client !== null ? $client : new Client();
     }
 
     private function isImgixUrl(string $url): bool
