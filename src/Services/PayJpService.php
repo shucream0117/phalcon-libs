@@ -559,4 +559,26 @@ class PayJpService extends AbstractService
             throw $e;
         }
     }
+
+    /**
+     * プランを更新
+     * @param Subscription $subscription
+     * @param string $newPlanId
+     * @param int|null $trialEndTimestamp
+     * @return Subscription
+     * @throws PayJpErrorBase
+     */
+    public function changePlan(
+        Subscription $subscription,
+        string $newPlanId,
+        ?int $trialEndTimestamp = null
+    ): Subscription {
+        try {
+            $subscription['plan'] = $newPlanId;
+            $subscription['trial_end'] = $trialEndTimestamp ?: 'now';
+            return $subscription->save();
+        } catch (PayJpErrorBase $e) {
+            throw $e;
+        }
+    }
 }
