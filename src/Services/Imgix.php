@@ -25,7 +25,7 @@ class Imgix
     private string $apiKey;
     private Client $client;
 
-    protected const PURGER_API_ENDPOINT = 'https://api.imgix.com/v2/image/purger';
+    protected const PURGER_API_ENDPOINT = 'https://api.imgix.com/api/v1/purge';
 
     public function __construct(string $apiKey, ?Client $client = null)
     {
@@ -42,16 +42,27 @@ class Imgix
     /**
      * imgixのキャッシュを消去する
      * @param string $url
+     * @param bool $subImage
      */
-    public function purge(string $url): void
+    public function purge(string $url, bool $subImage = true): void
     {
         if (!$this->isImgixUrl($url)) {
             return;
         }
         $this->client->post(static::PURGER_API_ENDPOINT, [
-            'headers' => ['ContentType' => MimeType::JSON],
-            'json' => ['url' => $url],
-            'auth' => [$this->apiKey, ''],
+            'headers' => [
+                'ContentType' => MimeType::JSON,
+                'Authorization' => "Bearer {$this->apiKey}"
+            ],
+            'json' => [
+                'data' => [
+                    'type' => 'purges',
+                    'attributes' => [
+                        'url' => $url,
+                        'sub_image' => $subImage,
+                    ],
+                ],
+            ],
         ]);
     }
 
