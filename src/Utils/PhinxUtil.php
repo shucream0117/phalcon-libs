@@ -12,6 +12,7 @@ class PhinxUtil
 {
     const COLLATION_UTF8_BIN = 'utf8_bin';
     const COLLATION_UTF8_GENERAL_CI = 'utf8_general_ci';
+    const COLLATION_UTF8MB4_BIN = 'utf8mb4_bin';
     const COLLATION_UTF8MB4_GENERAL_CI = 'utf8mb4_general_ci';
 
     const ULID_LENGTH = 26;
