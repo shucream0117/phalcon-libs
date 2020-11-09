@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Shucream0117\PhalconLib\Services\Firebase;
 
 use GuzzleHttp\Client;
-use Shucream0117\PhalconLib\Constants\ContentType;
+use Shucream0117\PhalconLib\Constants\MimeType;
 use Shucream0117\PhalconLib\Entities\Firebase\Payload;
 use Shucream0117\PhalconLib\Exceptions\FcmTokenExpiredException;
 use Shucream0117\PhalconLib\Utils\Json;
@@ -69,7 +69,7 @@ class Fcm
             $response = $this->httpClient->post(self::FCM_LEGACY_API_ENDPOINT, [
                 'headers' => [
                     'Authorization' => "key={$this->apiKey}",
-                    'Content-Type' => ContentType::JSON,
+                    'Content-Type' => MimeType::JSON,
                 ],
                 'json' => [
                     'registration_ids' => $tokens,

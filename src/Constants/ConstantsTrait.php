@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace Shucream0117\PhalconLib\Constants;
 
 use InvalidArgumentException;
+use ReflectionClass;
 use RuntimeException;
 
 // 定数クラスで使うと便利になるトレイト
-trait ConstantsWithTextTrait
+trait ConstantsTrait
 {
     /**
      * static $text という配列を定義すると定数にマッチするテキストを返してくれる。
@@ -31,6 +32,15 @@ trait ConstantsWithTextTrait
 
     public static function getAsList(): array
     {
-        return empty(static::$text) ? [] : array_keys(static::$text);
+        return array_values(self::getAsAssocArray());
+    }
+
+    /**
+     * @return array
+     */
+    public static function getAsAssocArray(): array
+    {
+        // TODO ｳｰﾝ...
+        return (new ReflectionClass(__CLASS__))->getConstants();
     }
 }

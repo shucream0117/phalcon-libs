@@ -6,8 +6,9 @@ namespace Shucream0117\PhalconLib\Services\Aws;
 
 use Aws\Result;
 use Aws\S3\S3Client;
+use Exception;
 
-class S3Service
+class S3
 {
     const STORAGE_CLASS_STANDARD = 'STANDARD'; // 標準
     const STORAGE_CLASS_STANDARD_IA = 'STANDARD_IA'; // 標準低頻度
@@ -18,7 +19,7 @@ class S3Service
 
     private S3Client $client;
 
-    private function __construct(S3Client $client)
+    public function __construct(S3Client $client)
     {
         $this->client = $client;
     }
@@ -61,6 +62,7 @@ class S3Service
      * @param string $filePath
      * @param string $contentType
      * @param string|null $acl
+     * @return Result
      * @throws Exception
      */
     public function saveToS3StorageClassStandard(
@@ -68,9 +70,9 @@ class S3Service
         string $bucket,
         string $filePath,
         string $contentType,
-        ?string $acl = S3::ACL_PRIVATE
-    ): void {
-        $this->saveToS3($data, $bucket, $filePath, $contentType, $acl, static::STORAGE_CLASS_STANDARD);
+        ?string $acl = self::ACL_PRIVATE
+    ): Result {
+        return $this->saveToS3($data, $bucket, $filePath, $contentType, $acl, static::STORAGE_CLASS_STANDARD);
     }
 
     /**
@@ -81,6 +83,7 @@ class S3Service
      * @param string $filePath
      * @param string $contentType
      * @param string|null $acl
+     * @return Result
      * @throws Exception
      */
     public function saveToS3StorageClassStandardIA(
@@ -88,9 +91,9 @@ class S3Service
         string $bucket,
         string $filePath,
         string $contentType,
-        ?string $acl = S3::ACL_PRIVATE
-    ): void {
-        $this->saveToS3($encodedImage, $bucket, $filePath, $contentType, $acl, static::STORAGE_CLASS_STANDARD_IA);
+        ?string $acl = self::ACL_PRIVATE
+    ): Result {
+        return $this->saveToS3($encodedImage, $bucket, $filePath, $contentType, $acl, static::STORAGE_CLASS_STANDARD_IA);
     }
 
     /**
@@ -118,10 +121,10 @@ class S3Service
      * @param string $prefix
      * @throws Exception
      */
-    public function deleteFromS3ByPrefix(string $bucket, string $prefix): void
+    public function deleteFromS3ByPrefix(string $bucket, string $prefix): Result
     {
         $targetKeys = $this->getFilePathListByPrefix($bucket, $prefix);
-        $this->delete($bucket, $targetKeys);
+        return $this->delete($bucket, $targetKeys);
     }
 
     /**

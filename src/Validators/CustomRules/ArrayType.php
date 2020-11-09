@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shucream0117\PhalconLib\Validators\CustomRules;
 
-class ArrayType extends AbstractCustomValidationRule
+class ArrayType extends AbstractTypeRule
 {
     protected $template = "Field :field must be array type";
 

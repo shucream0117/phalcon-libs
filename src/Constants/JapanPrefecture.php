@@ -6,7 +6,7 @@ namespace Shucream0117\PhalconLib\Constants;
 
 class JapanPrefecture
 {
-    use ConstantsWithTextTrait;
+    use ConstantsTrait;
 
     const HOKKAIDO = 'hokkaido';
     const AOMORI = 'aomori';

@@ -99,13 +99,12 @@ trait JsonResponseTrait
         return $this->createResponse(StatusCode::HTTP_SERVICE_UNAVAILABLE, $content);
     }
 
-    // TODO CORSについて考える
     protected function createResponse(
         int $statusCode,
         ?JsonSerializable $content = null,
         ?HeadersInterface $headers = null
     ): ResponseInterface {
-        $response = new Response();
+        $response = $this->response ?? new Response();
         $response->setStatusCode($statusCode);
         if (is_null($content)) {
             $content = new \stdClass();

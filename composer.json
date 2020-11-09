@@ -12,12 +12,19 @@
     "php": ">=7.4.0",
     "ext-phalcon": "^4.0",
     "ext-json": "*",
+    "ext-pdo": "*",
+    "ext-openssl": "*",
     "psr/http-message": "^1.0",
     "symfony/http-foundation": "^5.0",
     "guzzlehttp/guzzle": "^6.5",
     "robinvdvleuten/ulid": "^4.0",
     "aws/aws-sdk-php": "^3.137",
-    "abraham/twitteroauth": "^1.1"
+    "abraham/twitteroauth": "^1.1",
+    "google/apiclient": "^2.0",
+    "payjp/payjp-php": "~1.0",
+    "enqueue/enqueue": "^0.10.1",
+    "enqueue/redis": "^0.10.1",
+    "imgix/imgix-php": "^3.3"
   },
   "require-dev": {
     "phalcon/ide-stubs": "^4.0",

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shucream0117\PhalconLib\Validators\CustomRules;
 
-class IntVal extends AbstractCustomValidationRule
+class IntVal extends AbstractTypeRule
 {
     protected $template = "Field :field must be int val";
 

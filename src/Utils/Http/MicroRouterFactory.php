@@ -9,8 +9,11 @@ use Phalcon\Mvc\Micro\CollectionInterface;
 
 class MicroRouterFactory
 {
-    public static function create(string $controllerClassName, bool $lazy = true): CollectionInterface
-    {
-        return (new Collection())->setHandler($controllerClassName, $lazy);
+    public static function create(
+        string $controllerClassName,
+        string $prefix = '',
+        bool $lazy = true
+    ): CollectionInterface {
+        return (new Collection())->setPrefix($prefix)->setHandler($controllerClassName, $lazy);
     }
 }

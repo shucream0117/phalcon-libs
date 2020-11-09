@@ -14,6 +14,8 @@ class Ses implements EmailTransmitterInterface
     private string $senderEmailAddress;
     private SesClient $sesClient;
 
+    protected const CHARSET = 'UTF-8';
+
     public function __construct(string $senderName, string $senderEmailAddress, SesClient $client)
     {
         $this->senderName = $senderName;
@@ -23,7 +25,8 @@ class Ses implements EmailTransmitterInterface
 
     private function getSender(): string
     {
-        return "{$this->senderName} <{$this->senderEmailAddress}>";
+        $name = mb_encode_mimeheader($this->senderName, 'UTF-7', 'Q');
+        return "{$name} <{$this->senderEmailAddress}>";
     }
 
     /**
@@ -43,10 +46,12 @@ class Ses implements EmailTransmitterInterface
             ],
             'Message' => [
                 'Subject' => [
+                    'Charset' => static::CHARSET,
                     'Data' => $subject,
                 ],
                 'Body' => [
                     'Text' => [
+                        'Charset' => static::CHARSET,
                         'Data' => $body,
                     ],
                 ],

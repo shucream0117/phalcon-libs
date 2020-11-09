@@ -5,8 +5,8 @@ FROM php:7.4-cli
 # @see https://github.com/MilesChou/docker-phalcon
 #
 
-ARG PSR_VERSION=0.7.0
-ARG PHALCON_VERSION=4.0.5
+ARG PSR_VERSION=1.0.0
+ARG PHALCON_VERSION=4.0.6
 ARG PHALCON_EXT_PATH=php7/64bits
 
 RUN set -xe && \
@@ -33,7 +33,7 @@ php -m
 # install dependecies
 #
 RUN apt-get update && \
-build_deps='zip unzip git libmagickwand-dev libmcrypt-dev libjpeg62-turbo-dev libpng-dev libfreetype6-dev libssl-dev openssl' && \
+build_deps='wget zip unzip git libmagickwand-dev libmcrypt-dev libjpeg62-turbo-dev libpng-dev libfreetype6-dev libssl-dev openssl' && \
 apt-get install -y $build_deps && \
 apt-get clean && \
 rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*
@@ -53,5 +53,6 @@ WORKDIR /app
 # composer
 #
 ENV COMPOSER_ALLOW_SUPERUSER 1
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-RUN composer global require hirak/prestissimo
+COPY docker/composer/installer.sh /app/composer_installer.sh
+RUN sh /app/composer_installer.sh
+RUN rm -f /app/composer_installer.sh

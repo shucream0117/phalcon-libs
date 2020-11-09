@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shucream0117\PhalconLib\Validators;
 
 use Phalcon\Validation\AbstractValidator;
+use Phalcon\Validation\Validator\PresenceOf;
 
 class ValidationRuleSet
 {
@@ -12,8 +13,6 @@ class ValidationRuleSet
 
     /** @var AbstractValidator[] */
     private array $rules;
-
-    private bool $required;
 
     /**
      * @param string $field
@@ -40,6 +39,11 @@ class ValidationRuleSet
 
     public function isRequired(): bool
     {
-        return $this->required;
+        foreach ($this->getRules() as $r) {
+            if ($r instanceof PresenceOf) {
+                return true;
+            }
+        }
+        return false;
     }
 }

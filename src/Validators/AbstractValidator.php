@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Shucream0117\PhalconLib\Validators;
 
+use Phalcon\Di\Injectable;
 use Phalcon\Validation;
 
-abstract class AbstractValidator
+abstract class AbstractValidator extends Injectable
 {
     protected function optionCancelOnFail(): array
     {
@@ -24,6 +25,15 @@ abstract class AbstractValidator
         $validator = new Validation();
         foreach ($rules as $rule) {
             $field = $rule->getField();
+
+            /*
+             * 必須ではない場合(=PresenceOfがない場合) に、$params[$field]が存在しない場合はそもそもバリデーションに含めない。
+             * そうしないとオプショナルパラメータが送られていない場合もエラーを出してしまうため。
+             */
+            if (!$rule->isRequired() && !array_key_exists($field, $params)) {
+                continue;
+            }
+
             $validator->rules($field, $rule->getRules());
             if (array_key_exists($field, $params)) {
                 $targetParams[$field] = $params[$field];

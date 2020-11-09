@@ -7,6 +7,7 @@ namespace Shucream0117\PhalconLib\Utils;
 /*
  * Phinxのマイグレーションで使う便利クラス
  */
+
 class PhinxUtil
 {
     const COLLATION_UTF8_BIN = 'utf8_bin';
@@ -39,6 +40,7 @@ class PhinxUtil
     {
         return [
             'length' => static::ULID_LENGTH,
+            'collation' => static::COLLATION_UTF8_BIN,
             'null' => $null,
         ];
     }

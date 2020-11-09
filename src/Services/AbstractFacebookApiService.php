@@ -8,7 +8,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use Phalcon\Helper\Str;
 use Psr\Http\Message\ResponseInterface;
-use Shucream0117\PhalconLib\Constants\ContentType;
+use Shucream0117\PhalconLib\Constants\MimeType;
 use Shucream0117\PhalconLib\Entities\Facebook\AccessToken;
 use Shucream0117\PhalconLib\Entities\Facebook\AbstractUser as AbstractFacebookUser;
 use Shucream0117\PhalconLib\Exceptions\InvalidApiResponseFormatException;
@@ -86,7 +86,7 @@ abstract class AbstractFacebookApiService extends AbstractService
         return [
             'timeout' => 5,
             'headers' => [
-                'Accept' => ContentType::JSON,
+                'Accept' => MimeType::JSON,
             ],
         ];
     }
