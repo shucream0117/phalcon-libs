@@ -50,11 +50,15 @@ class AndroidPublisherService extends AbstractService
      *
      * @param string $receiptJson
      * @param string $signature
-     * @param string|resource $publicKey path to public key or resource
+     * @param string $publicKeyPath path to public key
      * @return bool
      */
-    public function verifyReceipt(string $receiptJson, string $signature, $publicKey)
+    public function verifyReceipt(string $receiptJson, string $signature, string $publicKeyPath)
     {
-        return openssl_verify($receiptJson, $signature, openssl_get_publickey($publicKey)) === 1;
+        if (!file_exists($publicKeyPath)) {
+            throw new \InvalidArgumentException("invalid key path");
+        }
+        $publicKeyId = openssl_get_publickey(file_get_contents($publicKeyPath));
+        return openssl_verify($receiptJson, $signature, $publicKeyId) === 1;
     }
 }
