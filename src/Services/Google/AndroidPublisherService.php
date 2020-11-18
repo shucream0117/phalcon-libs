@@ -46,6 +46,28 @@ class AndroidPublisherService extends AbstractService
     }
 
     /**
+     * 定期購読の詳細を取得
+     * @param string $packageName
+     * @param string $productId
+     * @param string $purchaseToken
+     * @param array $optionalParams
+     * @return \Google_Service_AndroidPublisher_SubscriptionPurchase
+     */
+    public function getSubscriptionPurchase(
+        string $packageName,
+        string $productId,
+        string $purchaseToken,
+        array $optionalParams = []
+    ): \Google_Service_AndroidPublisher_SubscriptionPurchase {
+        return $this->googleServiceAndroidPublisher->purchases_subscriptions->get(
+            $packageName,
+            $productId,
+            $purchaseToken,
+            $optionalParams
+        );
+    }
+
+    /**
      * レシートの検証
      *
      * @param string $receiptJson
