@@ -72,7 +72,7 @@ class PayJpService extends AbstractService
             return Customer::retrieve($id);
         } catch (PayJpErrorBase $e) {
             $error = PayJpError::createFromThrownError($e);
-            if ($error->is(PayJpError::INVALID_ID)) {
+            if ($error->getErrorCode() === PayJpError::INVALID_ID) {
                 return null;
             }
             throw $e; // 対象が存在しないエラーではない場合、異常なので投げ直す
@@ -138,7 +138,7 @@ class PayJpService extends AbstractService
             return $card;
         } catch (PayJpErrorBase $e) {
             $error = PayJpError::createFromThrownError($e);
-            if ($error->is(PayJpError::SAME_CARD)) {
+            if ($error->getErrorCode() === PayJpError::ALREADY_HAVE_THE_SAME_CARD) {
                 throw new SameCreditCardAlreadyRegisteredException();
             }
             throw $e;
@@ -179,7 +179,7 @@ class PayJpService extends AbstractService
             return $cards->offsetGet('data');
         } catch (PayJpErrorBase $e) {
             $error = PayJpError::createFromThrownError($e);
-            if ($error->is(PayJpError::MISSING_CARD)) { // 登録されていない場合
+            if ($error->getErrorCode() === PayJpError::MISSING_CARD) { // 登録されていない場合
                 return [];
             }
             throw $e;
@@ -203,7 +203,7 @@ class PayJpService extends AbstractService
             return $card;
         } catch (PayJpErrorBase $e) {
             $error = PayJpError::createFromThrownError($e);
-            if ($error->is(PayJpError::INVALID_ID)) {
+            if ($error->getErrorCode() === PayJpError::INVALID_ID) {
                 return null;
             }
             throw $e;
@@ -290,7 +290,7 @@ class PayJpService extends AbstractService
             return Charge::retrieve($chargeId);
         } catch (PayJpErrorBase $e) {
             $error = PayJpError::createFromThrownError($e);
-            if ($error->is(PayJpError::INVALID_ID)) {
+            if ($error->getErrorCode() === PayJpError::INVALID_ID) {
                 return null;
             }
             throw $e; // 対象が存在しないエラーではない場合、異常なので投げ直す
@@ -333,7 +333,7 @@ class PayJpService extends AbstractService
      * 月額プランを作成
      *
      * @param int $price
-     * @param int $billingDay 課金日(1〜31) 月によって存在しない日は自動的に月末で処理されるので、31を指定すれば常に月末が課金日になる
+     * @param int|null $billingDay 課金日(1〜31) 月によって存在しない日は自動的に月末で処理されるので、31を指定すれば常に月末が課金日になる
      * @param string|null $name
      * @param int|null $trialDays
      * @param array $metadata // 任意のキーバリューデータ
@@ -427,7 +427,7 @@ class PayJpService extends AbstractService
             return Plan::retrieve($planId);
         } catch (PayJpErrorBase $e) {
             $error = PayJpError::createFromThrownError($e);
-            if ($error->is(PayJpError::INVALID_ID)) {
+            if ($error->getErrorCode() === PayJpError::INVALID_ID) {
                 return null;
             }
             throw $e; // 対象が存在しないエラーではない場合、異常なので投げ直す
@@ -447,7 +447,7 @@ class PayJpService extends AbstractService
             return Subscription::retrieve($subscriptionId);
         } catch (PayJpErrorBase $e) {
             $error = PayJpError::createFromThrownError($e);
-            if ($error->is(PayJpError::INVALID_ID)) {
+            if ($error->getErrorCode() === PayJpError::INVALID_ID) {
                 return null;
             }
             throw $e; // 対象が存在しないエラーではない場合、異常なので投げ直す
