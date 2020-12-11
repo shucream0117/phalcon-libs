@@ -20,7 +20,7 @@
     "robinvdvleuten/ulid": "^4.0",
     "aws/aws-sdk-php": "^3.137",
     "abraham/twitteroauth": "^1.1",
-    "google/apiclient": "^2.0",
+    "google/apiclient": "^2.7",
     "payjp/payjp-php": "~1.0",
     "enqueue/enqueue": "^0.10.1",
     "enqueue/redis": "^0.10.1",

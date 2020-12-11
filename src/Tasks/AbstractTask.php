@@ -10,7 +10,7 @@ abstract class AbstractTask extends Task
 {
     abstract protected function run(): void;
 
-    final public function mainAction(): void
+    public function mainAction(): void
     {
         $this->run();
     }

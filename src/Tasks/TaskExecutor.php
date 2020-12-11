@@ -36,8 +36,7 @@ class TaskExecutor
      */
     public static function execute(Console $app, ?\Closure $onError = null): void
     {
-        $options = getopt('', ['task:']);
-        if (!$taskName = ($options['task'] ?? null)) {
+        if (!$taskName = self::getTaskNameFromCliOption()) {
             throw new \Exception('option --task is required');
         }
         try {
@@ -50,5 +49,15 @@ class TaskExecutor
                 $onError($throwable);
             }
         }
+    }
+
+    /**
+     * コマンドラインオプションからタスク名を取得する
+     * @return string|null
+     */
+    public static function getTaskNameFromCliOption(): ?string
+    {
+        $options = getopt('', ['task:']);
+        return $options['task'] ?? null;
     }
 }
