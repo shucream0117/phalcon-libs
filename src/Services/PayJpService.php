@@ -32,7 +32,7 @@ class PayJpService extends AbstractService
     const WEBHOOK_EVENT_TYPE_CHARGE_UPDATED = 'charge.updated';
     const WEBHOOK_EVENT_TYPE_CHARGE_REFUNDED = 'charge.refunded';
     const WEBHOOK_EVENT_TYPE_CHARGE_CAPTURED = 'charge.captured';
-    const WEBHOOK_EVENT_TYPE_TOKEN_CREATED = 'token.created	';
+    const WEBHOOK_EVENT_TYPE_TOKEN_CREATED = 'token.created';
     const WEBHOOK_EVENT_TYPE_CUSTOMER_CREATED = 'customer.created';
     const WEBHOOK_EVENT_TYPE_CUSTOMER_UPDATED = 'customer.updated';
     const WEBHOOK_EVENT_TYPE_CUSTOMER_DELETED = 'customer.deleted';
