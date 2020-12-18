@@ -455,6 +455,41 @@ class PayJpService extends AbstractService
     }
 
     /**
+     * @param Customer $customer
+     * @return array
+     */
+    public function getSubscriptionsByCustomerId(
+        string $customerId,
+        int $limit = 100,
+        int $offset = 0,
+        ?int $sinceTimestamp = null,
+        ?int $untilTimestamp = null,
+        ?string $planId = null,
+        ?string $status = null
+    ): Collection {
+        $params = [
+            'customer' => $customerId,
+            'limit' => $limit,
+            'offset' => $offset,
+        ];
+        if (!is_null($sinceTimestamp)) {
+            $params['since'] = $sinceTimestamp;
+        }
+        if (!is_null($untilTimestamp)) {
+            $params['until'] = $untilTimestamp;
+        }
+        if (!is_null($planId)) {
+            $params['plan'] = $planId;
+        }
+        if (!is_null($status)) {
+            $params['status'] = $status;
+        }
+        /** @var Collection $result */
+        $result = Subscription::all($params);
+        return $result;
+    }
+
+    /**
      * 定期課金を作成
      *
      * @param Customer $customer
