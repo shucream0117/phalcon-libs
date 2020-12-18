@@ -455,8 +455,14 @@ class PayJpService extends AbstractService
     }
 
     /**
-     * @param Customer $customer
-     * @return array
+     * @param string $customerId
+     * @param int $limit
+     * @param int $offset
+     * @param int|null $sinceTimestamp
+     * @param int|null $untilTimestamp
+     * @param string|null $planId
+     * @param string|null $status
+     * @return Collection
      */
     public function getSubscriptionsByCustomerId(
         string $customerId,
