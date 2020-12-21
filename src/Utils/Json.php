@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Shucream0117\PhalconLib\Utils;
 
-use JsonSerializable;
-
 class Json
 {
     protected const JSON_ENCODE_DEFAULT_OPTIONS = JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PARTIAL_OUTPUT_ON_ERROR;
@@ -28,7 +26,7 @@ class Json
     }
 
     /**
-     * @param JsonSerializable|array $data
+     * @param \JsonSerializable|array|\Object $data
      * @param int $options
      * @param int $depth
      * @return string
