@@ -52,6 +52,10 @@ class PayJpService extends AbstractService
     const WEBHOOK_EVENT_TYPE_TRANSFER_SUCCEEDED = 'transfer.succeeded';
     const WEBHOOK_EVENT_TYPE_TENANT_UPDATED = 'tenant.updated';
 
+    const SUBSCRIPTION_STATUS_ACTIVE = 'active';
+    const SUBSCRIPTION_STATUS_PAUSED = 'paused';
+    const SUBSCRIPTION_STATUS_CANCELED = 'canceled';
+    const SUBSCRIPTION_STATUS_TRIAL = 'trial';
 
     public function __construct(string $apiKey)
     {
