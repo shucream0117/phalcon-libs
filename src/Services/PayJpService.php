@@ -321,13 +321,22 @@ class PayJpService extends AbstractService
      * 返金する
      *
      * @param Charge $charge
+     * @param int|null $amount
+     * @param string|null $reason
      * @return Charge
      * @throws PayJpErrorBase
      */
-    public function refund(Charge $charge): Charge
+    public function refund(Charge $charge, ?int $amount = null, ?string $reason = null): Charge
     {
+        $params = [];
+        if ($amount) {
+            $params['amount'] = $amount;
+        }
+        if ($reason) {
+            $params['refund_reason'] = $reason;
+        }
         try {
-            return $charge->refund();
+            return $charge->refund($params ?: null);
         } catch (PayJpErrorBase $e) {
             throw $e;
         }
@@ -607,20 +616,45 @@ class PayJpService extends AbstractService
 
     /**
      * プランを更新
+     * @see https://payjp.hatenablog.com/entry/2016/01/19/080000
+     *
      * @param Subscription $subscription
      * @param string $newPlanId
      * @param int|null $trialEndTimestamp
+     * @param bool $prorate
+     * @param array $metadata
      * @return Subscription
      * @throws PayJpErrorBase
      */
     public function changePlan(
         Subscription $subscription,
         string $newPlanId,
-        ?int $trialEndTimestamp = null
+        ?int $trialEndTimestamp = null,
+        bool $prorate = false,
+        array $metadata = []
     ): Subscription {
         try {
             $subscription['plan'] = $newPlanId;
             $subscription['trial_end'] = $trialEndTimestamp ?: 'now';
+            $subscription['prorate'] = $prorate;
+            $subscription['metadata'] = $metadata;
+            return $subscription->save();
+        } catch (PayJpErrorBase $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * 次回更新プランの設定を変更する
+     * @param Subscription $subscription
+     * @param string $nextPlanId
+     * @return Subscription
+     * @throws PayJpErrorBase
+     */
+    public function changeNextPlan(Subscription $subscription, string $nextPlanId): Subscription
+    {
+        try {
+            $subscription['next_cycle_plan'] = $nextPlanId;
             return $subscription->save();
         } catch (PayJpErrorBase $e) {
             throw $e;
