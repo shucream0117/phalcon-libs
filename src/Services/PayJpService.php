@@ -637,7 +637,9 @@ class PayJpService extends AbstractService
             $subscription['plan'] = $newPlanId;
             $subscription['trial_end'] = $trialEndTimestamp ?: 'now';
             $subscription['prorate'] = $prorate;
-            $subscription['metadata'] = $metadata;
+            if ($metadata) {
+                $subscription['metadata'] = $metadata;
+            }
             return $subscription->save();
         } catch (PayJpErrorBase $e) {
             throw $e;
