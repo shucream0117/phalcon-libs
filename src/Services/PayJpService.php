@@ -302,6 +302,54 @@ class PayJpService extends AbstractService
     }
 
     /**
+     * 支払い情報一覧を取得
+     *
+     * @param string $customerId
+     * @param int $limit
+     * @param int $offset
+     * @param string|null $subscriptionId
+     * @param int|null $sinceTimestamp
+     * @param int|null $untilTimestamp
+     * @param string|null $tenantId
+     * @return Charge[]
+     * @throws PayJpErrorBase
+     */
+    public function getChargeListByCustomerId(
+        string $customerId,
+        int $limit = 100,
+        int $offset = 0,
+        ?string $subscriptionId = null,
+        ?int $sinceTimestamp = null,
+        ?int $untilTimestamp = null,
+        ?string $tenantId = null
+    ): array {
+        try {
+            $params = [
+                'customer' => $customerId,
+                'limit' => $limit,
+                'offset' => $offset,
+            ];
+            if (!is_null($subscriptionId)) {
+                $params['subscription'] = $subscriptionId;
+            }
+            if (!is_null($sinceTimestamp)) {
+                $params['since'] = $sinceTimestamp;
+            }
+            if (!is_null($untilTimestamp)) {
+                $params['until'] = $untilTimestamp;
+            }
+            if (!is_null($tenantId)) {
+                $params['tenant'] = $tenantId;
+            }
+            /** @var Collection $list */
+            $list = Charge::all($params);
+            return $list['data'];
+        } catch (PayJpErrorBase $e) {
+            throw $e;
+        }
+    }
+
+    /**
      * 支払いを確定する
      *
      * @param Charge $charge
@@ -329,10 +377,10 @@ class PayJpService extends AbstractService
     public function refund(Charge $charge, ?int $amount = null, ?string $reason = null): Charge
     {
         $params = [];
-        if ($amount) {
+        if (!is_null($amount)) {
             $params['amount'] = $amount;
         }
-        if ($reason) {
+        if (!is_null($reason)) {
             $params['refund_reason'] = $reason;
         }
         try {
@@ -416,7 +464,7 @@ class PayJpService extends AbstractService
         if (!is_null($trialDays) && (1 <= $trialDays)) {
             $params['trial_days'] = $trialDays;
         }
-        if ($name) {
+        if (!is_null($name)) {
             $params['name'] = $name;
         }
 
@@ -637,7 +685,9 @@ class PayJpService extends AbstractService
             $subscription['plan'] = $newPlanId;
             $subscription['trial_end'] = $trialEndTimestamp ?: 'now';
             $subscription['prorate'] = $prorate;
-            $subscription['metadata'] = $metadata;
+            if ($metadata) {
+                $subscription['metadata'] = $metadata;
+            }
             return $subscription->save();
         } catch (PayJpErrorBase $e) {
             throw $e;
