@@ -87,7 +87,7 @@ abstract class AbstractTwitterApiService extends AbstractService
             'include_entities' => false,
         ]);
         // 再帰的にarrayにキャストするために横着してJsonへのエンコードとデコードを行き来しています
-        return static::createFromCredentialResponse(Json::decode(Json::encode($result)));
+        return static::createFromCredentialResponse($this->castToArray($result));
     }
 
     /**
@@ -128,11 +128,19 @@ abstract class AbstractTwitterApiService extends AbstractService
         if (!is_null($cursor)) {
             $params['cursor'] = $cursor;
         }
+
         $result = $this->oauth->get('friends/ids', $params);
+        $result = $this->castToArray($result);
         return [
             'ids' => $result['ids'] ?? [],
             'previous_cursor' => $result['previous_cursor_str'] ?? null,
             'next_cursor' => $result['next_cursor_str'] ?? null,
         ];
+    }
+
+    private function castToArrayRecursively(\stdClass $stdClass): array
+    {
+        // 再帰的にarrayにキャストするために横着してJsonへのエンコードとデコードを行き来しています
+        return Json::decode(Json::encode($stdClass));
     }
 }
