@@ -103,6 +103,7 @@ class Error
     const NOT_ALLOWED_METHOD = 'not_allowed_method';
     const OVER_CAPACITY = 'over_capacity';
     const REFUND_LIMIT_EXCEEDED = 'refund_limit_exceeded';
+    const UNDER_MAINTENANCE = 'under_maintenance';
 
     private string $errorType;
     private string $errorCode;
@@ -123,6 +124,11 @@ class Error
     public function getErrorCode(): string
     {
         return $this->errorCode;
+    }
+
+    public function getStatusCode(): int
+    {
+        return $this->statusCode;
     }
 
     /**
