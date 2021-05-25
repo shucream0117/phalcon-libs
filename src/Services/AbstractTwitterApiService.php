@@ -87,7 +87,7 @@ abstract class AbstractTwitterApiService extends AbstractService
             'include_entities' => false,
         ]);
         // 再帰的にarrayにキャストするために横着してJsonへのエンコードとデコードを行き来しています
-        return static::createFromCredentialResponse(Json::decode(Json::encode($result)));
+        return static::createFromCredentialResponse($this->castToArrayRecursively($result));
     }
 
     /**
@@ -108,19 +108,39 @@ abstract class AbstractTwitterApiService extends AbstractService
 
     /**
      * フォローしているユーザのID(not screen_name)を取得する。
-     * 1回で最大5000件だが、それ以上は一旦無視することにするのでページングは考えない
+     * 1回で最大5000件。
      *
      * @param AccessToken $accessToken
-     * @return string[]
-     * @throws TwitterOAuthException
+     * @param int $count
+     * @param string|null $cursor
+     * @return array
      */
-    public function getFollowingIds(AccessToken $accessToken): array
-    {
+    public function getFollowingIds(
+        AccessToken $accessToken,
+        int $count = self::MAX_FOLLOWING_IDS_FETCH_COUNT,
+        ?string $cursor = null
+    ): array {
         $this->setAccessToken($accessToken);
-        $result = $this->oauth->get('friends/ids', [
+        $params = [
             'stringify_ids' => true,
-            'count' => self::MAX_FOLLOWING_IDS_FETCH_COUNT,
-        ]);
-        return $result->ids ?? [];
+            'count' => $count,
+        ];
+        if (!is_null($cursor)) {
+            $params['cursor'] = $cursor;
+        }
+
+        $result = $this->oauth->get('friends/ids', $params);
+        $result = $this->castToArrayRecursively($result);
+        return [
+            'ids' => $result['ids'] ?? [],
+            'previous_cursor' => $result['previous_cursor_str'] ?? null,
+            'next_cursor' => $result['next_cursor_str'] ?? null,
+        ];
+    }
+
+    protected function castToArrayRecursively(\stdClass $stdClass): array
+    {
+        // 再帰的にarrayにキャストするために横着してJsonへのエンコードとデコードを行き来しています
+        return Json::decode(Json::encode($stdClass));
     }
 }
