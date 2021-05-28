@@ -557,6 +557,46 @@ class PayJpService extends AbstractService
     }
 
     /**
+     * PlanID指定で定期課金リストを取得する
+     * @param string|null $planId
+     * @param int $limit
+     * @param int $offset
+     * @param int|null $sinceTimestamp
+     * @param int|null $untilTimestamp
+     * @param string|null $status
+     * @return Collection
+     */
+    public function getSubscriptionsByPlanId(
+        string $planId,
+        int $limit = 100,
+        int $offset = 0,
+        ?int $sinceTimestamp = null,
+        ?int $untilTimestamp = null,
+        ?string $status = null
+    ): Collection {
+        $params = [
+            'plan' => $planId,
+            'limit' => $limit,
+            'offset' => $offset,
+        ];
+        if (!is_null($sinceTimestamp)) {
+            $params['since'] = $sinceTimestamp;
+        }
+        if (!is_null($untilTimestamp)) {
+            $params['until'] = $untilTimestamp;
+        }
+        if (!is_null($planId)) {
+            $params['plan'] = $planId;
+        }
+        if (!is_null($status)) {
+            $params['status'] = $status;
+        }
+        /** @var Collection $result */
+        $result = Subscription::all($params);
+        return $result;
+    }
+
+    /**
      * 定期課金を作成
      *
      * @param Customer $customer
