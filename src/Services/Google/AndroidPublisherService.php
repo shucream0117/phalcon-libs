@@ -75,12 +75,33 @@ class AndroidPublisherService extends AbstractService
      * @param string $publicKeyPath path to public key
      * @return bool
      */
-    public function verifyReceipt(string $receiptJson, string $signature, string $publicKeyPath)
+    public function verifyReceipt(string $receiptJson, string $signature, string $publicKeyPath): bool
     {
         if (!file_exists($publicKeyPath)) {
             throw new \InvalidArgumentException("invalid key path");
         }
         $publicKeyId = openssl_get_publickey(file_get_contents($publicKeyPath));
         return openssl_verify($receiptJson, $signature, $publicKeyId) === 1;
+    }
+
+    /**
+     * 定期課金のキャンセル(キャンセルしても期限内は有効)
+     * @param string $packageName
+     * @param string $productId
+     * @param string $purchaseToken
+     * @param array $optionalParams
+     */
+    public function cancelSubscription(
+        string $packageName,
+        string $productId,
+        string $purchaseToken,
+        array $optionalParams = []
+    ): void {
+        $this->googleServiceAndroidPublisher->purchases_subscriptions->cancel(
+            $packageName,
+            $productId,
+            $purchaseToken,
+            $optionalParams
+        );
     }
 }
