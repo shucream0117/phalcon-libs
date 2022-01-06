@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shucream0117\PhalconLib\Middleware;
 
 use Phalcon\Events\Event;
+use Phalcon\Http\RequestInterface;
 use Phalcon\Http\ResponseInterface;
 use Phalcon\Mvc\Micro;
 
@@ -12,20 +13,31 @@ class CorsMiddleware implements MicroMiddlewareInterface
 {
     public function beforeHandleRoute(Event $event, Micro $application)
     {
-        $origin = $application->request->getHeader('Origin') ?: '*';
+        $request = $application->request;
         $application->response
-            ->setHeader('Access-Control-Allow-Origin', $origin)
+            ->setHeader('Access-Control-Allow-Origin', $this->getAllowOrigin($request))
             ->setHeader(
                 'Access-Control-Allow-Methods',
-                'GET,PUT,POST,DELETE,OPTIONS'
+                implode(',', $this->getAllowMethods($request))
             )
-            ->setHeader(
-                'Access-Control-Allow-Headers',
-                'Origin, X-Requested-With, Content-Range, ' .
-                'Content-Disposition, Content-Type, Authorization'
-            )
+            ->setHeader('Access-Control-Allow-Headers', implode(',', $this->getAllowHeaders($request)))
             ->setHeader('Access-Control-Allow-Credentials', 'true');
         return true;
+    }
+
+    protected function getAllowHeaders(RequestInterface $request): array
+    {
+        return ['Origin', 'X-Requested-With', 'Content-Type', 'Authorization'];
+    }
+
+    protected function getAllowOrigin(RequestInterface $request): string
+    {
+        return $request->getHeader('Origin') ?: '*';
+    }
+
+    protected function getAllowMethods(RequestInterface $request): array
+    {
+        return ['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS'];
     }
 
     public function call(Micro $application)
