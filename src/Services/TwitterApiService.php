@@ -10,16 +10,19 @@ use Shucream0117\PhalconLib\Entities\Twitter\AbstractUser as AbstractTwitterUser
 use Shucream0117\PhalconLib\Entities\Twitter\AccessToken;
 use Shucream0117\PhalconLib\Entities\Twitter\AccountSetting;
 use Shucream0117\PhalconLib\Entities\Twitter\RequestToken;
+use Shucream0117\PhalconLib\Exceptions\OAuthException;
+use Shucream0117\PhalconLib\Exceptions\TwitterApiErrorException;
 use Shucream0117\PhalconLib\Utils\Json;
 
-abstract class AbstractTwitterApiService extends AbstractService
+/*
+ * this class supports just only Twitter API v1.1
+ */
+
+class TwitterApiService extends AbstractService
 {
     private TwitterOAuth $oauth;
 
     const MAX_FOLLOWING_IDS_FETCH_COUNT = 5000;
-
-    const API_VERSION_1_1 = '1.1';
-    const API_VERSION_2 = '2';
 
     public function __construct(
         string $consumerKey,
@@ -28,6 +31,7 @@ abstract class AbstractTwitterApiService extends AbstractService
         ?string $oauthTokenSecret = null
     ) {
         $this->oauth = new TwitterOAuth($consumerKey, $consumerSecret, $oauthToken, $oauthTokenSecret);
+        $this->oauth->setApiVersion('1.1');
     }
 
     /**
@@ -36,7 +40,15 @@ abstract class AbstractTwitterApiService extends AbstractService
      * @param array $data
      * @return AbstractTwitterUser
      */
-    abstract protected static function createFromCredentialResponse(array $data): AbstractTwitterUser;
+    protected static function createFromCredentialResponse(array $data): AbstractTwitterUser
+    {
+        return new class($data['id']) extends AbstractTwitterUser {
+            public function __construct(string $id)
+            {
+                $this->id = $id;
+            }
+        };
+    }
 
     public function setAccessToken(AccessToken $token): self
     {
@@ -53,12 +65,6 @@ abstract class AbstractTwitterApiService extends AbstractService
     {
         $result = $this->oauth->oauth('oauth/request_token', ['oauth_callback' => $callbackUrl]);
         return new RequestToken($result['oauth_token'], $result['oauth_token_secret']);
-    }
-
-    public function setApiVersion(string $apiVersion): self
-    {
-        $this->oauth->setApiVersion($apiVersion);
-        return $this;
     }
 
     /**
@@ -81,8 +87,8 @@ abstract class AbstractTwitterApiService extends AbstractService
         $this->oauth->setOauthToken($requestToken->getToken(), $requestToken->getSecret());
         $result = $this->oauth->oauth('oauth/access_token', ['oauth_verifier' => $oauthVerifier]);
         return new AccessToken(
-            $accessToken = $result['oauth_token'],
-            $accessTokenSecret = $result['oauth_token_secret']
+            $result['oauth_token'],
+            $result['oauth_token_secret']
         );
     }
 
@@ -94,13 +100,13 @@ abstract class AbstractTwitterApiService extends AbstractService
     public function verifyCredentials(AccessToken $accessToken): AbstractTwitterUser
     {
         $this->setAccessToken($accessToken);
-        $result = $this->oauth->get('account/verify_credentials', [
+        $result = $this->get('account/verify_credentials', [
             'include_email' => true,
             'skip_status' => true,
             'include_entities' => false,
         ]);
         // 再帰的にarrayにキャストするために横着してJsonへのエンコードとデコードを行き来しています
-        return static::createFromCredentialResponse($this->castToArrayRecursively($result));
+        return static::createFromCredentialResponse($result);
     }
 
     /**
@@ -111,11 +117,11 @@ abstract class AbstractTwitterApiService extends AbstractService
     public function getAccountSettings(AccessToken $accessToken): AccountSetting
     {
         $this->setAccessToken($accessToken);
-        $result = $this->oauth->get('account/settings');
+        $result = $this->get('account/settings');
         return new AccountSetting(
-            $result->time_zone->tzinfo_name,
-            $result->time_zone->utc_offset,
-            $result->language
+            $result['time_zone']['tzinfo_name'],
+            $result['time_zone']['utc_offset'],
+            $result['language']
         );
     }
 
@@ -142,8 +148,7 @@ abstract class AbstractTwitterApiService extends AbstractService
             $params['cursor'] = $cursor;
         }
 
-        $result = $this->oauth->get('friends/ids', $params);
-        $result = $this->castToArrayRecursively($result);
+        $result = $this->get('friends/ids', $params);
         return [
             'ids' => $result['ids'] ?? [],
             'previous_cursor' => $result['previous_cursor_str'] ?? null,
@@ -151,9 +156,28 @@ abstract class AbstractTwitterApiService extends AbstractService
         ];
     }
 
-    protected function castToArrayRecursively(\stdClass $stdClass): array
+    /**
+     * @param string $path
+     * @param array<string, mixed> $parameters
+     * @return array
+     * @throws OAuthException
+     * @throws TwitterApiErrorException
+     */
+    protected function get(string $path, array $parameters = []): array
     {
-        // 再帰的にarrayにキャストするために横着してJsonへのエンコードとデコードを行き来しています
-        return Json::decode(Json::encode($stdClass));
+        $result = $this->oauth->get($path, $parameters);
+        if (empty($result)) {
+            throw new OAuthException();
+        }
+        $resultArr = Json::decode(Json::encode($result)); // 再帰的にキャストするために一度json文字列にしてから再度連想配列に戻す
+        $this->handleErrorIfNeeded($resultArr);
+        return $resultArr;
+    }
+
+    protected function handleErrorIfNeeded(array $result): void
+    {
+        if (!empty($result['errors'])) {
+            throw (new TwitterApiErrorException())->setErrors($result['errors']);
+        }
     }
 }
