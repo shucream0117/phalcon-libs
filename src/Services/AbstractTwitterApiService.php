@@ -18,9 +18,16 @@ abstract class AbstractTwitterApiService extends AbstractService
 
     const MAX_FOLLOWING_IDS_FETCH_COUNT = 5000;
 
-    public function __construct(TwitterOAuth $oauth)
-    {
-        $this->oauth = $oauth;
+    const API_VERSION_1_1 = '1.1';
+    const API_VERSION_2 = '2';
+
+    public function __construct(
+        string $consumerKey,
+        string $consumerSecret,
+        ?string $oauthToken = null,
+        ?string $oauthTokenSecret = null
+    ) {
+        $this->oauth = new TwitterOAuth($consumerKey, $consumerSecret, $oauthToken, $oauthTokenSecret);
     }
 
     /**
@@ -46,6 +53,12 @@ abstract class AbstractTwitterApiService extends AbstractService
     {
         $result = $this->oauth->oauth('oauth/request_token', ['oauth_callback' => $callbackUrl]);
         return new RequestToken($result['oauth_token'], $result['oauth_token_secret']);
+    }
+
+    public function setApiVersion(string $apiVersion): self
+    {
+        $this->oauth->setApiVersion($apiVersion);
+        return $this;
     }
 
     /**
