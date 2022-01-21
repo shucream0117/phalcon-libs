@@ -24,7 +24,8 @@
     "payjp/payjp-php": "~1.0",
     "enqueue/enqueue": "^0.10.1",
     "enqueue/redis": "^0.10.1",
-    "imgix/imgix-php": "^3.3"
+    "imgix/imgix-php": "^3.3",
+    "firebase/php-jwt": "^5.5"
   },
   "require-dev": {
     "phalcon/ide-stubs": "^4.0",
