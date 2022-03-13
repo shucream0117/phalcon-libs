@@ -111,6 +111,21 @@ class TwitterApiService extends AbstractService
 
     /**
      * @param AccessToken $accessToken
+     * @param string $userId
+     * @return AbstractTwitterUser
+     * @throws OAuthException
+     * @throws TwitterApiErrorException
+     */
+    public function getUserById(AccessToken $accessToken, string $userId): AbstractTwitterUser
+    {
+        $this->setAccessToken($accessToken);
+        $result = $this->get('users/show', ['user_id' => $userId]);
+        // 再帰的にarrayにキャストするために横着してJsonへのエンコードとデコードを行き来しています
+        return static::createFromCredentialResponse($result);
+    }
+
+    /**
+     * @param AccessToken $accessToken
      * @return AccountSetting
      * @throws TwitterOAuthException
      */
