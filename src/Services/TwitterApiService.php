@@ -157,6 +157,25 @@ class TwitterApiService extends AbstractService
     }
 
     /**
+     * ユーザーID(固定の数字ID)でフォローする
+     * 400/24h per user
+     *
+     * @param AccessToken $accessToken
+     * @param string $targetUserId
+     * @param bool $enableNotification
+     * @throws OAuthException
+     * @throws TwitterApiErrorException
+     */
+    public function followByUserId(
+        AccessToken $accessToken,
+        string $targetUserId,
+        bool $enableNotification = false // 通知登録
+    ): void {
+        $this->setAccessToken($accessToken);
+        $this->post('friendships/create', ['user_id' => $targetUserId, 'follow' => $enableNotification]);
+    }
+
+    /**
      * @param string $path
      * @param array<string, mixed> $parameters
      * @return array
@@ -166,6 +185,24 @@ class TwitterApiService extends AbstractService
     protected function get(string $path, array $parameters = []): array
     {
         $result = $this->oauth->get($path, $parameters);
+        if (empty($result)) {
+            throw new OAuthException();
+        }
+        $resultArr = Json::decode(Json::encode($result)); // 再帰的にキャストするために一度json文字列にしてから再度連想配列に戻す
+        $this->handleErrorIfNeeded($resultArr);
+        return $resultArr;
+    }
+
+    /**
+     * @param string $path
+     * @param array<string, mixed> $parameters
+     * @return array
+     * @throws OAuthException
+     * @throws TwitterApiErrorException
+     */
+    protected function post(string $path, array $parameters = []): array
+    {
+        $result = $this->oauth->post($path, $parameters);
         if (empty($result)) {
             throw new OAuthException();
         }
