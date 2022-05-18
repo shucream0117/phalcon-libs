@@ -119,16 +119,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.219.0",
+            "version": "3.222.14",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "e77a9bc31fdd98d3893f398468a36e00b12db3dc"
+                "reference": "d9f586558a2f3313c34f34f4a01c5ddbbbcfb3c0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/e77a9bc31fdd98d3893f398468a36e00b12db3dc",
-                "reference": "e77a9bc31fdd98d3893f398468a36e00b12db3dc",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/d9f586558a2f3313c34f34f4a01c5ddbbbcfb3c0",
+                "reference": "d9f586558a2f3313c34f34f4a01c5ddbbbcfb3c0",
                 "shasum": ""
             },
             "require": {
@@ -204,9 +204,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.219.0"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.222.14"
             },
-            "time": "2022-04-08T18:16:00+00:00"
+            "time": "2022-05-17T18:14:21+00:00"
         },
         {
             "name": "brick/math",
@@ -399,23 +399,23 @@
         },
         {
             "name": "enqueue/enqueue",
-            "version": "0.10.15",
+            "version": "0.10.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-enqueue/enqueue.git",
-                "reference": "406190fc7b3458777e497512f3c3addbd4d13f31"
+                "reference": "8f97d308d218bd52aba244a2aff3a665b225a133"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-enqueue/enqueue/zipball/406190fc7b3458777e497512f3c3addbd4d13f31",
-                "reference": "406190fc7b3458777e497512f3c3addbd4d13f31",
+                "url": "https://api.github.com/repos/php-enqueue/enqueue/zipball/8f97d308d218bd52aba244a2aff3a665b225a133",
+                "reference": "8f97d308d218bd52aba244a2aff3a665b225a133",
                 "shasum": ""
             },
             "require": {
                 "enqueue/dsn": "^0.10",
                 "enqueue/null": "^0.10",
                 "php": "^7.3|^8.0",
-                "psr/container": "^1 || ^2.0",
+                "psr/container": "^1.1 || ^2.0",
                 "psr/log": "^1.0 || ^2.0 || ^3.0",
                 "queue-interop/amqp-interop": "^0.8.2",
                 "queue-interop/queue-interop": "^0.8",
@@ -440,12 +440,12 @@
                 "enqueue/stomp": "0.10.x-dev",
                 "enqueue/test": "0.10.x-dev",
                 "phpunit/phpunit": "^9.5",
-                "symfony/config": "^4.3|^5",
-                "symfony/console": "^4.3|^5",
-                "symfony/dependency-injection": "^4.3|^5",
-                "symfony/event-dispatcher": "^4.3|^5",
-                "symfony/http-kernel": "^4.3|^5",
-                "symfony/yaml": "^4.3|^5"
+                "symfony/config": "^5.1|^6.0",
+                "symfony/console": "^5.1|^6.0",
+                "symfony/dependency-injection": "^5.1|^6.0",
+                "symfony/event-dispatcher": "^5.1|^6.0",
+                "symfony/http-kernel": "^5.1|^6.0",
+                "symfony/yaml": "^5.1|^6.0"
             },
             "suggest": {
                 "enqueue/amqp-ext": "AMQP transport (based on php extension)",
@@ -454,9 +454,9 @@
                 "enqueue/redis": "Redis transport",
                 "enqueue/sqs": "Amazon AWS SQS transport",
                 "enqueue/stomp": "STOMP transport",
-                "symfony/config": "^4.3|^5",
-                "symfony/console": "^2.8|^3|^4|^5 If you want to use cli commands",
-                "symfony/dependency-injection": "^4.3|^5"
+                "symfony/config": "^5.1|^6.0",
+                "symfony/console": "^5.1|^6.0 If you want to use cli commands",
+                "symfony/dependency-injection": "^5.1|^6.0"
             },
             "type": "library",
             "extra": {
@@ -491,7 +491,7 @@
                 "issues": "https://github.com/php-enqueue/enqueue-dev/issues",
                 "source": "https://github.com/php-enqueue/enqueue-dev"
             },
-            "time": "2021-11-02T16:38:53+00:00"
+            "time": "2022-02-16T11:14:49+00:00"
         },
         {
             "name": "enqueue/null",
@@ -673,16 +673,16 @@
         },
         {
             "name": "google/apiclient",
-            "version": "v2.12.2",
+            "version": "v2.12.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client.git",
-                "reference": "a18b0e1ef5618523c607c01a41ec137c7f9af3b1"
+                "reference": "702eed9ae7022ba20dc7118c8161060cb50ee9f8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client/zipball/a18b0e1ef5618523c607c01a41ec137c7f9af3b1",
-                "reference": "a18b0e1ef5618523c607c01a41ec137c7f9af3b1",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client/zipball/702eed9ae7022ba20dc7118c8161060cb50ee9f8",
+                "reference": "702eed9ae7022ba20dc7118c8161060cb50ee9f8",
                 "shasum": ""
             },
             "require": {
@@ -738,22 +738,22 @@
             ],
             "support": {
                 "issues": "https://github.com/googleapis/google-api-php-client/issues",
-                "source": "https://github.com/googleapis/google-api-php-client/tree/v2.12.2"
+                "source": "https://github.com/googleapis/google-api-php-client/tree/v2.12.4"
             },
-            "time": "2022-04-05T16:19:05+00:00"
+            "time": "2022-04-20T16:44:03+00:00"
         },
         {
             "name": "google/apiclient-services",
-            "version": "v0.242.0",
+            "version": "v0.249.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client-services.git",
-                "reference": "73d4c0ed4b241e7396699e0ee1d1cdebabac25e8"
+                "reference": "95df14183356e45291e1c686cea57850281101db"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/73d4c0ed4b241e7396699e0ee1d1cdebabac25e8",
-                "reference": "73d4c0ed4b241e7396699e0ee1d1cdebabac25e8",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/95df14183356e45291e1c686cea57850281101db",
+                "reference": "95df14183356e45291e1c686cea57850281101db",
                 "shasum": ""
             },
             "require": {
@@ -782,30 +782,30 @@
             ],
             "support": {
                 "issues": "https://github.com/googleapis/google-api-php-client-services/issues",
-                "source": "https://github.com/googleapis/google-api-php-client-services/tree/v0.242.0"
+                "source": "https://github.com/googleapis/google-api-php-client-services/tree/v0.249.0"
             },
-            "time": "2022-04-03T01:24:10+00:00"
+            "time": "2022-05-16T01:10:12+00:00"
         },
         {
             "name": "google/auth",
-            "version": "v1.19.0",
+            "version": "v1.21.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-auth-library-php.git",
-                "reference": "31e5d24d5fa0eaf6adc7e596292dc4732f4b60c5"
+                "reference": "73392bad2eb6852eea9084b6bbdec752515cb849"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-auth-library-php/zipball/31e5d24d5fa0eaf6adc7e596292dc4732f4b60c5",
-                "reference": "31e5d24d5fa0eaf6adc7e596292dc4732f4b60c5",
+                "url": "https://api.github.com/repos/googleapis/google-auth-library-php/zipball/73392bad2eb6852eea9084b6bbdec752515cb849",
+                "reference": "73392bad2eb6852eea9084b6bbdec752515cb849",
                 "shasum": ""
             },
             "require": {
-                "firebase/php-jwt": "~5.0",
+                "firebase/php-jwt": "^5.5||^6.0",
                 "guzzlehttp/guzzle": "^6.2.1|^7.0",
                 "guzzlehttp/psr7": "^1.7|^2.0",
-                "php": ">=5.6",
-                "psr/cache": "^1.0|^2.0",
+                "php": "^7.1||^8.0",
+                "psr/cache": "^1.0|^2.0|^3.0",
                 "psr/http-message": "^1.0"
             },
             "require-dev": {
@@ -813,7 +813,7 @@
                 "kelvinmo/simplejwt": "^0.2.5|^0.5.1",
                 "phpseclib/phpseclib": "^2.0.31",
                 "phpspec/prophecy-phpunit": "^1.1",
-                "phpunit/phpunit": "^5.7||^8.5.13",
+                "phpunit/phpunit": "^7.5||^8.5",
                 "sebastian/comparator": ">=1.2.3",
                 "squizlabs/php_codesniffer": "^3.5"
             },
@@ -840,9 +840,9 @@
             "support": {
                 "docs": "https://googleapis.github.io/google-auth-library-php/main/",
                 "issues": "https://github.com/googleapis/google-auth-library-php/issues",
-                "source": "https://github.com/googleapis/google-auth-library-php/tree/v1.19.0"
+                "source": "https://github.com/googleapis/google-auth-library-php/tree/v1.21.0"
             },
-            "time": "2022-03-24T21:22:45+00:00"
+            "time": "2022-04-13T20:35:52+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -1151,16 +1151,16 @@
         },
         {
             "name": "monolog/monolog",
-            "version": "2.5.0",
+            "version": "2.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Seldaek/monolog.git",
-                "reference": "4192345e260f1d51b365536199744b987e160edc"
+                "reference": "247918972acd74356b0a91dfaa5adcaec069b6c0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/4192345e260f1d51b365536199744b987e160edc",
-                "reference": "4192345e260f1d51b365536199744b987e160edc",
+                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/247918972acd74356b0a91dfaa5adcaec069b6c0",
+                "reference": "247918972acd74356b0a91dfaa5adcaec069b6c0",
                 "shasum": ""
             },
             "require": {
@@ -1173,18 +1173,23 @@
             "require-dev": {
                 "aws/aws-sdk-php": "^2.4.9 || ^3.0",
                 "doctrine/couchdb": "~1.0@dev",
-                "elasticsearch/elasticsearch": "^7",
+                "elasticsearch/elasticsearch": "^7 || ^8",
+                "ext-json": "*",
                 "graylog2/gelf-php": "^1.4.2",
+                "guzzlehttp/guzzle": "^7.4",
+                "guzzlehttp/psr7": "^2.2",
                 "mongodb/mongodb": "^1.8",
                 "php-amqplib/php-amqplib": "~2.4 || ^3",
                 "php-console/php-console": "^3.1.3",
-                "phpspec/prophecy": "^1.6.1",
+                "phpspec/prophecy": "^1.15",
                 "phpstan/phpstan": "^0.12.91",
-                "phpunit/phpunit": "^8.5",
+                "phpunit/phpunit": "^8.5.14",
                 "predis/predis": "^1.1",
                 "rollbar/rollbar": "^1.3 || ^2 || ^3",
-                "ruflin/elastica": ">=0.90@dev",
-                "swiftmailer/swiftmailer": "^5.3|^6.0"
+                "ruflin/elastica": "^7",
+                "swiftmailer/swiftmailer": "^5.3|^6.0",
+                "symfony/mailer": "^5.4 || ^6",
+                "symfony/mime": "^5.4 || ^6"
             },
             "suggest": {
                 "aws/aws-sdk-php": "Allow sending log messages to AWS services like DynamoDB",
@@ -1234,7 +1239,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Seldaek/monolog/issues",
-                "source": "https://github.com/Seldaek/monolog/tree/2.5.0"
+                "source": "https://github.com/Seldaek/monolog/tree/2.6.0"
             },
             "funding": [
                 {
@@ -1246,7 +1251,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-04-08T15:43:54+00:00"
+            "time": "2022-05-10T09:36:00+00:00"
         },
         {
             "name": "mtdowling/jmespath.php",
@@ -2228,16 +2233,16 @@
         },
         {
             "name": "symfony/http-foundation",
-            "version": "v5.4.6",
+            "version": "v5.4.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/http-foundation.git",
-                "reference": "34e89bc147633c0f9dd6caaaf56da3b806a21465"
+                "reference": "ff2818d1c3d49860bcae1f2cbb5eb00fcd3bf9e2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/http-foundation/zipball/34e89bc147633c0f9dd6caaaf56da3b806a21465",
-                "reference": "34e89bc147633c0f9dd6caaaf56da3b806a21465",
+                "url": "https://api.github.com/repos/symfony/http-foundation/zipball/ff2818d1c3d49860bcae1f2cbb5eb00fcd3bf9e2",
+                "reference": "ff2818d1c3d49860bcae1f2cbb5eb00fcd3bf9e2",
                 "shasum": ""
             },
             "require": {
@@ -2281,7 +2286,7 @@
             "description": "Defines an object-oriented layer for the HTTP specification",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/http-foundation/tree/v5.4.6"
+                "source": "https://github.com/symfony/http-foundation/tree/v5.4.8"
             },
             "funding": [
                 {
@@ -2297,7 +2302,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-03-05T21:03:43+00:00"
+            "time": "2022-04-22T08:14:12+00:00"
         },
         {
             "name": "symfony/polyfill-ctype",
