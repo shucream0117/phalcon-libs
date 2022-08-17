@@ -74,7 +74,7 @@ class Logger
      * @param string $targetLevel
      * @return \Phalcon\Logger
      */
-    private function getLoggerFor(string $targetLevel): \Phalcon\Logger
+    protected function getLoggerFor(string $targetLevel): \Phalcon\Logger
     {
         $excludedLevels = Arr::filter(array_keys(self::AVAILABLE_LEVELS), fn($level) => $level !== $targetLevel);
         return $this->logger->excludeAdapters($excludedLevels);
