@@ -40,5 +40,21 @@ class BoolValTest extends TestBase
         $validationResult = $this->getValidator()->testValidate(['is_something' => 'false']);
         $this->assertEmpty($validationResult->getErrors());
         $this->assertSame('false', $validationResult->validated('is_something'));
+
+        $validationResult = $this->getValidator()->testValidate(['is_something' => true]);
+        $this->assertEmpty($validationResult->getErrors());
+        $this->assertSame(true, $validationResult->validated('is_something'));
+
+        $validationResult = $this->getValidator()->testValidate(['is_something' => false]);
+        $this->assertEmpty($validationResult->getErrors());
+        $this->assertSame(false, $validationResult->validated('is_something'));
+
+        $validationResult = $this->getValidator()->testValidate(['is_something' => 'TRUE']);
+        $this->assertEmpty($validationResult->getErrors());
+        $this->assertSame('TRUE', $validationResult->validated('is_something'));
+
+        $validationResult = $this->getValidator()->testValidate(['is_something' => 'falSE']);
+        $this->assertEmpty($validationResult->getErrors());
+        $this->assertSame('falSE', $validationResult->validated('is_something'));
     }
 }

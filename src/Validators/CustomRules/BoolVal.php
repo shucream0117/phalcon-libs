@@ -13,6 +13,13 @@ class BoolVal extends AbstractTypeRule
 
     protected function checkValue($value): bool
     {
-        return $value === 'true' || $value === 'false';
+        if (is_bool($value)) {
+            return true;
+        }
+        if (!is_string($value)) {
+            return false;
+        }
+        $lowerCasedValue = strtolower($value);
+        return $lowerCasedValue === 'true' || $lowerCasedValue === 'false';
     }
 }
