@@ -40,37 +40,37 @@ abstract class AbstractQueueManager extends AbstractService
 
     /**
      * 遅延実行キューとして詰む
-     * (遅延実行は後続のキュー処理をブロックするため、即時実行キューと混在させないほうが良い)
+     *
      *
      * @param string $queueName
      * @param AbstractQueueProperty $data
-     * @param int $delaySec
+     * @param int $delayMilliSec
      * @throws DeliveryDelayNotSupportedException
      * @throws Exception
      * @throws InvalidDestinationException
      * @throws InvalidMessageException
      */
-    public function enqueueDelayed(string $queueName, AbstractQueueProperty $data, int $delaySec): void
+    public function enqueueDelayed(string $queueName, AbstractQueueProperty $data, int $delayMilliSec): void
     {
-        $this->send($queueName, $data, $delaySec);
+        $this->send($queueName, $data, $delayMilliSec);
     }
 
     /**
      * @param string $queueName
      * @param AbstractQueueProperty $data
-     * @param int|null $delaySec
+     * @param int|null $delayMilliSec
      * @throws DeliveryDelayNotSupportedException
      * @throws Exception
      * @throws InvalidDestinationException
      * @throws InvalidMessageException
      */
-    private function send(string $queueName, AbstractQueueProperty $data, ?int $delaySec): void
+    private function send(string $queueName, AbstractQueueProperty $data, ?int $delayMilliSec): void
     {
         $context = $this->getOrCreateContext();
         $queue = $context->createQueue($queueName);
         $producer = $context->createProducer();
-        if (!is_null($delaySec)) {
-            $producer->setDeliveryDelay($delaySec);
+        if (!is_null($delayMilliSec)) {
+            $producer->setDeliveryDelay($delayMilliSec);
         }
         $producer->send(
             $queue,
