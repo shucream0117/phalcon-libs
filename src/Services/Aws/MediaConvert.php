@@ -17,6 +17,7 @@ class MediaConvert extends AbstractService
     const STATUS_PROCESSING = 'PROCESSING';
     const STATUS_ERROR = 'ERROR';
     const STATUS_SUBMITTED = 'SUBMITTED';
+    const STATUS_CANCELED = 'CANCELED';
 
     public function __construct(MediaConvertClient $client)
     {
@@ -39,6 +40,18 @@ class MediaConvert extends AbstractService
     public function getJobById(string $jobId): Result
     {
         if ($result = $this->client->getJob(['Id' => $jobId])) {
+            return $result;
+        }
+        throw new InvalidApiResponseFormatException();
+    }
+
+    /**
+     * @param string $jobId
+     * @return Result
+     */
+    public function cancelJobById(string $jobId): Result
+    {
+        if ($result = $this->client->cancelJob(['Id' => $jobId])) {
             return $result;
         }
         throw new InvalidApiResponseFormatException();
