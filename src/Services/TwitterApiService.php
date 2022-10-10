@@ -22,6 +22,16 @@ class TwitterApiService extends AbstractService
 {
     private TwitterOAuth $oauth;
 
+    /*
+     * エラーコードたち
+     * @see https://developer.twitter.com/ja/docs/basics/response-codes
+     */
+    const ERROR_CODE_RATE_LIMIT_EXCEEDED = 88;
+    const ERROR_CODE_INVALID_OR_EXPIRED_TOKEN = 89;
+    const ERROR_CODE_UNABLE_TO_VERIFY_CREDENTIALS = 99;
+    const ERROR_CODE_OVER_CAPACITY = 130;
+    const ERROR_CODE_INTERNAL_ERROR = 131;
+
     const MAX_FOLLOWING_IDS_FETCH_COUNT = 5000;
 
     public function __construct(
