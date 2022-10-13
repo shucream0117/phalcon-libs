@@ -133,12 +133,7 @@ class Date
     public static function createDateTimeFromTimeStampMilliSec(int $timestampMilliSec, ?DateTimeZone $timezone = null): DateTime
     {
         $timestamp = (int)floor($timestampMilliSec / 1000);
-        if (!$timezone) {
-            $timezone = static::getDefaultTimezone();
-        }
-        $dt = new DateTime('now', $timezone);
-        $dt->setTimestamp($timestamp);
-        return $dt;
+        return self::createDateTimeFromTimeStamp($timestamp, $timezone);
     }
 
     /**
