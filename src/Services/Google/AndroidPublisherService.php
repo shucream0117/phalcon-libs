@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shucream0117\PhalconLib\Services\Google;
 
+use Google\Service\AndroidPublisher\SubscriptionPurchaseV2;
 use Google_Service_AndroidPublisher;
 use Shucream0117\PhalconLib\Services\AbstractService;
 
@@ -52,6 +53,8 @@ class AndroidPublisherService extends AbstractService
      * @param string $purchaseToken
      * @param array $optionalParams
      * @return \Google_Service_AndroidPublisher_SubscriptionPurchase
+     *
+     * @deprecated use getSubscriptionPurchaseV2
      */
     public function getSubscriptionPurchase(
         string $packageName,
@@ -62,6 +65,27 @@ class AndroidPublisherService extends AbstractService
         return $this->googleServiceAndroidPublisher->purchases_subscriptions->get(
             $packageName,
             $productId,
+            $purchaseToken,
+            $optionalParams
+        );
+    }
+
+    /**
+     * 定期購読の詳細を取得
+     * @see https://developers.google.com/android-publisher/api-ref/rest/v3/purchases.subscriptionsv2/get
+     *
+     * @param string $packageName
+     * @param string $purchaseToken
+     * @param array $optionalParams
+     * @return SubscriptionPurchaseV2
+     */
+    public function getSubscriptionPurchaseV2(
+        string $packageName,
+        string $purchaseToken,
+        array $optionalParams = []
+    ): SubscriptionPurchaseV2 {
+        return $this->googleServiceAndroidPublisher->purchases_subscriptionsv2->get(
+            $packageName,
             $purchaseToken,
             $optionalParams
         );
