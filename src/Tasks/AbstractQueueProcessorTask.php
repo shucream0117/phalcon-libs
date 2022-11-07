@@ -8,6 +8,11 @@ use Enqueue\Consumption\CallbackProcessor;
 use Enqueue\Consumption\ChainExtension;
 use Enqueue\Consumption\Extension\SignalExtension;
 use Exception;
+use Interop\Queue\Exception\DeliveryDelayNotSupportedException;
+use Interop\Queue\Exception\InvalidDestinationException;
+use Interop\Queue\Exception\InvalidMessageException;
+use Interop\Queue\Processor;
+use Shucream0117\PhalconLib\Entities\AbstractQueueProperty;
 use Shucream0117\PhalconLib\Services\QueueManager\AbstractQueueManager;
 
 abstract class AbstractQueueProcessorTask extends AbstractTask
@@ -42,5 +47,22 @@ abstract class AbstractQueueProcessorTask extends AbstractTask
         return new ChainExtension([
             new SignalExtension(),
         ]);
+    }
+
+    /**
+     * 遅延秒数(ミリ秒) を指定して積み直す。
+     *
+     * @param AbstractQueueProperty $queueProperty
+     * @param int $delayMilliSec
+     * @return string
+     * @throws \Interop\Queue\Exception
+     * @throws DeliveryDelayNotSupportedException
+     * @throws InvalidDestinationException
+     * @throws InvalidMessageException
+     */
+    protected function requeueWithDelay(AbstractQueueProperty $queueProperty, int $delayMilliSec): string
+    {
+        $this->getQueueManager()->enqueueDelayed($this->getQueueName(), $queueProperty, $delayMilliSec);
+        return Processor::REJECT;
     }
 }

@@ -22,6 +22,16 @@ class TwitterApiService extends AbstractService
 {
     private TwitterOAuth $oauth;
 
+    /*
+     * エラーコードたち
+     * @see https://developer.twitter.com/ja/docs/basics/response-codes
+     */
+    const ERROR_CODE_RATE_LIMIT_EXCEEDED = 88;
+    const ERROR_CODE_INVALID_OR_EXPIRED_TOKEN = 89;
+    const ERROR_CODE_UNABLE_TO_VERIFY_CREDENTIALS = 99;
+    const ERROR_CODE_OVER_CAPACITY = 130;
+    const ERROR_CODE_INTERNAL_ERROR = 131;
+
     const MAX_FOLLOWING_IDS_FETCH_COUNT = 5000;
 
     public function __construct(
@@ -97,13 +107,17 @@ class TwitterApiService extends AbstractService
      * @return AbstractTwitterUser
      * @throws TwitterOAuthException
      */
-    public function verifyCredentials(AccessToken $accessToken): AbstractTwitterUser
-    {
+    public function verifyCredentials(
+        AccessToken $accessToken,
+        bool $includeEmail = false,
+        bool $includeEntities = false,
+        bool $skipStatus = false
+    ): AbstractTwitterUser {
         $this->setAccessToken($accessToken);
         $result = $this->get('account/verify_credentials', [
-            'include_email' => true,
-            'skip_status' => true,
-            'include_entities' => false,
+            'include_email' => $includeEmail,
+            'skip_status' => $skipStatus,
+            'include_entities' => $includeEntities,
         ]);
         // 再帰的にarrayにキャストするために横着してJsonへのエンコードとデコードを行き来しています
         return static::createFromCredentialResponse($result);

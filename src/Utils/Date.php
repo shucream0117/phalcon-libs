@@ -124,6 +124,19 @@ class Date
     }
 
     /**
+     * ミリ秒から生成
+     * @param int $timestampMilliSec
+     * @param DateTimeZone|null $timezone
+     * @return DateTime
+     * @throws \Exception
+     */
+    public static function createDateTimeFromTimeStampMilliSec(int $timestampMilliSec, ?DateTimeZone $timezone = null): DateTime
+    {
+        $timestamp = (int)floor($timestampMilliSec / 1000);
+        return self::createDateTimeFromTimeStamp($timestamp, $timezone);
+    }
+
+    /**
      * @param int $year
      * @param int $month
      * @param int $day
