@@ -153,6 +153,28 @@ class AppleDeveloperApiService extends AbstractService
     }
 
     /**
+     * getTransactionHistory のラッパーで、全ての履歴を取得してマージして返す
+     *
+     * @param string $originalTxId
+     * @return array
+     */
+    public function getAllRevisionsOfTransactionHistory(string $originalTxId):array
+    {
+        $revision = null;
+        $txList = [];
+        while(true) {
+            $result = $this->getTransactionHistory($originalTxId, $revision);
+            $txList = array_merge($txList, $result['signedTransactions']);
+            if (!$result['hasMore']) {
+                break;
+            }
+            $revision = $result['revision'];
+        }
+        $result['signedTransactions'] = $txList;
+        return $result;
+    }
+    
+    /**
      * リクエスト用のJWT作成
      * https://developer.apple.com/documentation/appstoreserverapi/generating_tokens_for_api_requests
      * @return string
