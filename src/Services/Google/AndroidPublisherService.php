@@ -14,6 +14,27 @@ class AndroidPublisherService extends AbstractService
 
     const SCOPE_ANDROID_PUBLISHER = 'https://www.googleapis.com/auth/androidpublisher';
 
+    /*
+     * Acknowledgement State
+     * @see https://developers.google.com/android-publisher/api-ref/rest/v3/purchases.subscriptionsv2#acknowledgementstate
+     */
+    const ACKNOWLEDGEMENT_STATE_ACKNOWLEDGED = 'ACKNOWLEDGEMENT_STATE_ACKNOWLEDGED';
+    const ACKNOWLEDGEMENT_STATE_PENDING = 'ACKNOWLEDGEMENT_STATE_PENDING';
+    const ACKNOWLEDGEMENT_STATE_UNSPECIFIED = 'ACKNOWLEDGEMENT_STATE_UNSPECIFIED';
+
+    /*
+     * Subscription State
+     * @see https://developers.google.com/android-publisher/api-ref/rest/v3/purchases.subscriptionsv2#subscriptionstate
+     */
+    const SUBSCRIPTION_STATE_UNSPECIFIED = 'SUBSCRIPTION_STATE_UNSPECIFIED';
+    const SUBSCRIPTION_STATE_PENDING = 'SUBSCRIPTION_STATE_PENDING';
+    const SUBSCRIPTION_STATE_ACTIVE = 'SUBSCRIPTION_STATE_ACTIVE';
+    const SUBSCRIPTION_STATE_PAUSED = 'SUBSCRIPTION_STATE_PAUSED';
+    const SUBSCRIPTION_STATE_IN_GRACE_PERIOD = 'SUBSCRIPTION_STATE_IN_GRACE_PERIOD';
+    const SUBSCRIPTION_STATE_ON_HOLD = 'SUBSCRIPTION_STATE_ON_HOLD';
+    const SUBSCRIPTION_STATE_CANCELED = 'SUBSCRIPTION_STATE_CANCELED';
+    const SUBSCRIPTION_STATE_EXPIRED = 'SUBSCRIPTION_STATE_EXPIRED';
+
     public function __construct(Google_Service_AndroidPublisher $googleServiceAndroidPublisher)
     {
         $googleServiceAndroidPublisher->getClient()->addScope(self::SCOPE_ANDROID_PUBLISHER);
