@@ -158,11 +158,11 @@ class AppleDeveloperApiService extends AbstractService
      * @param string $originalTxId
      * @return array
      */
-    public function getAllRevisionsOfTransactionHistory(string $originalTxId):array
+    public function getAllRevisionsOfTransactionHistory(string $originalTxId): array
     {
         $revision = null;
         $txList = [];
-        while(true) {
+        while (true) {
             $result = $this->getTransactionHistory($originalTxId, $revision);
             $txList = array_merge($txList, $result['signedTransactions']);
             if (!$result['hasMore']) {
@@ -173,7 +173,7 @@ class AppleDeveloperApiService extends AbstractService
         $result['signedTransactions'] = $txList;
         return $result;
     }
-    
+
     /**
      * リクエスト用のJWT作成
      * https://developer.apple.com/documentation/appstoreserverapi/generating_tokens_for_api_requests

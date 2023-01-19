@@ -74,8 +74,6 @@ class AndroidPublisherService extends AbstractService
      * @param string $purchaseToken
      * @param array $optionalParams
      * @return \Google_Service_AndroidPublisher_SubscriptionPurchase
-     *
-     * @deprecated use getSubscriptionPurchaseV2
      */
     public function getSubscriptionPurchase(
         string $packageName,
