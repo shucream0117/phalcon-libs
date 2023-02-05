@@ -9,6 +9,7 @@ use Abraham\TwitterOAuth\TwitterOAuthException;
 use Shucream0117\PhalconLib\Entities\Twitter\AbstractUser as AbstractTwitterUser;
 use Shucream0117\PhalconLib\Entities\Twitter\AccessToken;
 use Shucream0117\PhalconLib\Entities\Twitter\AccountSetting;
+use Shucream0117\PhalconLib\Entities\Twitter\Friendship;
 use Shucream0117\PhalconLib\Entities\Twitter\RequestToken;
 use Shucream0117\PhalconLib\Exceptions\OAuthException;
 use Shucream0117\PhalconLib\Exceptions\TwitterApiErrorException;
@@ -199,9 +200,25 @@ class TwitterApiService extends AbstractService
         AccessToken $accessToken,
         string $targetUserId,
         bool $enableNotification = false // 通知登録
-    ): void {
+    ): void
+    {
         $this->setAccessToken($accessToken);
         $this->post('friendships/create', ['user_id' => $targetUserId, 'follow' => $enableNotification]);
+    }
+
+    /**
+     * 関係性を取得
+     * 15req / 15min per user
+     * @param string[] $userIds max 100 ids.
+     * @return Friendship[]
+     * @throws TwitterApiErrorException
+     * @throws OAuthException
+     */
+    public function getFriendshipsByUserIds(AccessToken $accessToken, array $userIds): array
+    {
+        $this->setAccessToken($accessToken);
+        $result = $this->get('friendships/lookup', ['user_id' => implode(',', $userIds)]);
+        return array_map(fn(array $data) => Friendship::fromJson($data), $result);
     }
 
     /**

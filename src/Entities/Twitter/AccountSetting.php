@@ -16,4 +16,19 @@ class AccountSetting
         $this->timezoneUtcOffset = $utfOffset;
         $this->language = $language;
     }
+
+    public function getTimezoneName(): string
+    {
+        return $this->timezoneName;
+    }
+
+    public function getTimezoneUtcOffset(): int
+    {
+        return $this->timezoneUtcOffset;
+    }
+
+    public function getLanguage(): string
+    {
+        return $this->language;
+    }
 }
