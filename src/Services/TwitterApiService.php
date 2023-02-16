@@ -11,7 +11,6 @@ use Shucream0117\PhalconLib\Entities\Twitter\AccessToken;
 use Shucream0117\PhalconLib\Entities\Twitter\AccountSetting;
 use Shucream0117\PhalconLib\Entities\Twitter\Friendship;
 use Shucream0117\PhalconLib\Entities\Twitter\RequestToken;
-use Shucream0117\PhalconLib\Exceptions\OAuthException;
 use Shucream0117\PhalconLib\Exceptions\TwitterApiErrorException;
 use Shucream0117\PhalconLib\Utils\Json;
 
@@ -91,7 +90,7 @@ class TwitterApiService extends AbstractService
      * @param RequestToken $requestToken
      * @param string $oauthVerifier
      * @return AccessToken
-     * @throws TwitterOAuthException
+     * @throws TwitterApiErrorException
      */
     public function getAccessToken(RequestToken $requestToken, string $oauthVerifier): AccessToken
     {
@@ -106,7 +105,7 @@ class TwitterApiService extends AbstractService
     /**
      * @param AccessToken $accessToken
      * @return AbstractTwitterUser
-     * @throws TwitterOAuthException
+     * @throws TwitterApiErrorException
      */
     public function verifyCredentials(
         AccessToken $accessToken,
@@ -128,7 +127,6 @@ class TwitterApiService extends AbstractService
      * @param AccessToken $accessToken
      * @param string $userId
      * @return AbstractTwitterUser
-     * @throws OAuthException
      * @throws TwitterApiErrorException
      */
     public function getUserById(AccessToken $accessToken, string $userId): AbstractTwitterUser
@@ -139,10 +137,25 @@ class TwitterApiService extends AbstractService
         return static::createFromCredentialResponse($result);
     }
 
+
+    /**
+     * @param AccessToken $accessToken
+     * @param string $screenName
+     * @return AbstractTwitterUser
+     * @throws TwitterApiErrorException
+     */
+    public function getUserByScreenName(AccessToken $accessToken, string $screenName): AbstractTwitterUser
+    {
+        $this->setAccessToken($accessToken);
+        $result = $this->get('users/show', ['screen_name' => $screenName]);
+        // 再帰的にarrayにキャストするために横着してJsonへのエンコードとデコードを行き来しています
+        return static::createFromCredentialResponse($result);
+    }
+
     /**
      * @param AccessToken $accessToken
      * @return AccountSetting
-     * @throws TwitterOAuthException
+     * @throws TwitterApiErrorException
      */
     public function getAccountSettings(AccessToken $accessToken): AccountSetting
     {
@@ -193,7 +206,6 @@ class TwitterApiService extends AbstractService
      * @param AccessToken $accessToken
      * @param string $targetUserId
      * @param bool $enableNotification
-     * @throws OAuthException
      * @throws TwitterApiErrorException
      */
     public function followByUserId(
@@ -212,7 +224,6 @@ class TwitterApiService extends AbstractService
      * @param string[] $userIds max 100 ids.
      * @return Friendship[]
      * @throws TwitterApiErrorException
-     * @throws OAuthException
      */
     public function getFriendshipsByUserIds(AccessToken $accessToken, array $userIds): array
     {
@@ -222,18 +233,29 @@ class TwitterApiService extends AbstractService
     }
 
     /**
+     * 関係性を取得
+     * 15req / 15min per user
+     * @param AccessToken $accessToken
+     * @param string[] $screenNames
+     * @return Friendship[]
+     * @throws TwitterApiErrorException
+     */
+    public function getFriendshipsByScreenNames(AccessToken $accessToken, array $screenNames): array
+    {
+        $this->setAccessToken($accessToken);
+        $result = $this->get('friendships/lookup', ['screen_name' => implode(',', $screenNames)]);
+        return array_map(fn(array $data) => Friendship::fromJson($data), $result);
+    }
+
+    /**
      * @param string $path
      * @param array<string, mixed> $parameters
      * @return array
-     * @throws OAuthException
      * @throws TwitterApiErrorException
      */
     protected function get(string $path, array $parameters = []): array
     {
         $result = $this->oauth->get($path, $parameters);
-        if (empty($result)) {
-            throw new OAuthException();
-        }
         $resultArr = Json::decode(Json::encode($result)); // 再帰的にキャストするために一度json文字列にしてから再度連想配列に戻す
         $this->handleErrorIfNeeded($resultArr);
         return $resultArr;
@@ -243,15 +265,11 @@ class TwitterApiService extends AbstractService
      * @param string $path
      * @param array<string, mixed> $parameters
      * @return array
-     * @throws OAuthException
      * @throws TwitterApiErrorException
      */
     protected function post(string $path, array $parameters = []): array
     {
         $result = $this->oauth->post($path, $parameters);
-        if (empty($result)) {
-            throw new OAuthException();
-        }
         $resultArr = Json::decode(Json::encode($result)); // 再帰的にキャストするために一度json文字列にしてから再度連想配列に戻す
         $this->handleErrorIfNeeded($resultArr);
         return $resultArr;
