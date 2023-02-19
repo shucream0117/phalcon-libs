@@ -194,8 +194,8 @@ class TwitterApiService extends AbstractService
         $result = $this->get('friends/ids', $params);
         return [
             'ids' => $result['ids'] ?? [],
-            'previous_cursor' => $result['previous_cursor_str'] ?? null,
-            'next_cursor' => $result['next_cursor_str'] ?? null,
+            'previous_cursor' => $result['previous_cursor_str'] ?? '0',
+            'next_cursor' => $result['next_cursor_str'] ?? '0',
         ];
     }
 
