@@ -26,20 +26,33 @@ class TwitterApiV2Service extends AbstractService
      * エラーコードたち
      * @see https://developer.twitter.com/en/support/twitter-api/error-troubleshooting
      */
-    const ERROR_CODE_RATE_LIMIT_EXCEEDED = 88;
-    const ERROR_CODE_INVALID_OR_EXPIRED_TOKEN = 89;
-    const ERROR_CODE_UNABLE_TO_VERIFY_CREDENTIALS = 99;
-    const ERROR_CODE_OVER_CAPACITY = 130;
-    const ERROR_CODE_INTERNAL_ERROR = 131;
+    public const ERROR_CODE_RATE_LIMIT_EXCEEDED = 88;
+    public const ERROR_CODE_INVALID_OR_EXPIRED_TOKEN = 89;
+    public const ERROR_CODE_UNABLE_TO_VERIFY_CREDENTIALS = 99;
+    public const ERROR_CODE_OVER_CAPACITY = 130;
+    public const ERROR_CODE_INTERNAL_ERROR = 131;
 
-    const MAX_FOLLOWING_IDS_FETCH_COUNT = 1000;
+    public const MAX_FOLLOWING_IDS_FETCH_COUNT = 1000;
 
-    /**
-     * @var string User object を取得する API に渡すパラメーター
+    /*
+     * User object を取得する API に渡すパラメーター user.fields のオプションたち
      * @see https://developer.twitter.com/en/docs/twitter-api/data-dictionary/object-model/user
-     * @note v2 では profile_banner_url と email を取得する手段がなくなった
      */
-    private const USER_FIELDS = 'id,username,name,description,profile_image_url,protected,entities';
+    public const USER_FIELDS_ID = 'id';
+    public const USER_FIELDS_NAME = 'name';
+    public const USER_FIELDS_USERNAME = 'username';
+    public const USER_FIELDS_CREATED_AT = 'created_at';
+    public const USER_FIELDS_DESCRIPTION = 'description';
+    public const USER_FIELDS_ENTITIES = 'entities';
+    public const USER_FIELDS_LOCATION = 'location';
+    public const USER_FIELDS_PINNED_TWEET_ID = 'pinned_tweet_id';
+    public const USER_FIELDS_PROFILE_IMAGE_URL = 'profile_image_url';
+    public const USER_FIELDS_PROTECTED = 'protected';
+    public const USER_FIELDS_PUBLIC_METRICS = 'public_metrics';
+    public const USER_FIELDS_URL = 'url';
+    public const USER_FIELDS_VERIFIED = 'verified';
+    public const USER_FIELDS_VERIFIED_TYPE = 'verified_type';
+    public const USER_FIELDS_WITHHELD = 'withheld';
 
     public function __construct(
         string $consumerKey,
@@ -112,14 +125,15 @@ class TwitterApiV2Service extends AbstractService
     /**
      * access token による user 取得。75req/15min per user
      * @param AccessToken $accessToken
+     * @param array<self::USER_FIELDS_*> $userFields
      * @return AbstractTwitterUser
      * @throws TwitterApiErrorException
      */
-    public function getMe(AccessToken $accessToken): AbstractTwitterUser
+    public function getMe(AccessToken $accessToken, array $userFields): AbstractTwitterUser
     {
         $this->setAccessToken($accessToken);
         $result = $this->get('users/me', [
-            'user.fields' => self::USER_FIELDS,
+            'user.fields' => implode(',', $userFields),
         ]);
         return static::createFromUserResponse($result['data']);
     }
@@ -128,14 +142,15 @@ class TwitterApiV2Service extends AbstractService
      * id による user 取得。900req/15min per user
      * @param AccessToken $accessToken
      * @param string $userId
+     * @param array<self::USER_FIELDS_*> $userFields
      * @return AbstractTwitterUser
      * @throws TwitterApiErrorException
      */
-    public function getUserById(AccessToken $accessToken, string $userId): AbstractTwitterUser
+    public function getUserById(AccessToken $accessToken, string $userId, array $userFields): AbstractTwitterUser
     {
         $this->setAccessToken($accessToken);
         $result = $this->get("users/{$userId}", [
-            'user.fields' => self::USER_FIELDS,
+            'user.fields' => implode(',', $userFields),
         ]);
         return static::createFromUserResponse($result['data']);
     }
