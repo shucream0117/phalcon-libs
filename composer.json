@@ -19,7 +19,7 @@
     "guzzlehttp/guzzle": "^6.5",
     "robinvdvleuten/ulid": "^4.0",
     "aws/aws-sdk-php": "^3.137",
-    "abraham/twitteroauth": "^3.2.0",
+    "abraham/twitteroauth": "^4.0.1",
     "google/apiclient": "^2.7",
     "payjp/payjp-php": "~1.0",
     "enqueue/enqueue": "^0.10.1",
