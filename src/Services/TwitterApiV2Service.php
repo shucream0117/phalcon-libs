@@ -15,7 +15,8 @@ use Shucream0117\PhalconLib\Exceptions\TwitterApiErrorException;
 use Shucream0117\PhalconLib\Utils\Json;
 
 /**
- * this class supports just only Twitter API v2
+ * this class supports just only Twitter API v2. OAuth 1.0a 専用。
+ * 使用しているライブラリ abraham/twitteroauth が OAuth 2.0 に未対応。ライブラリの対応次第で今後を考える。
  */
 class TwitterApiV2Service extends AbstractService
 {
