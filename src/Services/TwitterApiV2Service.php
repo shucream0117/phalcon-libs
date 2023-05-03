@@ -6,33 +6,53 @@ namespace Shucream0117\PhalconLib\Services;
 
 use Abraham\TwitterOAuth\TwitterOAuth;
 use Abraham\TwitterOAuth\TwitterOAuthException;
+use RuntimeException;
 use Shucream0117\PhalconLib\Entities\Twitter\AbstractUser as AbstractTwitterUser;
 use Shucream0117\PhalconLib\Entities\Twitter\AccessToken;
-use Shucream0117\PhalconLib\Entities\Twitter\AccountSetting;
 use Shucream0117\PhalconLib\Entities\Twitter\Friendship;
 use Shucream0117\PhalconLib\Entities\Twitter\RequestToken;
 use Shucream0117\PhalconLib\Exceptions\TwitterApiErrorException;
 use Shucream0117\PhalconLib\Utils\Json;
 
-/*
- * this class supports just only Twitter API v1.1
+/**
+ * this class supports just only Twitter API v2. OAuth 1.0a 専用。
+ * 使用しているライブラリ abraham/twitteroauth が OAuth 2.0 に未対応。ライブラリの対応次第で今後を考える。
  */
-
-class TwitterApiService extends AbstractService
+class TwitterApiV2Service extends AbstractService
 {
     private TwitterOAuth $oauth;
 
     /*
      * エラーコードたち
-     * @see https://developer.twitter.com/ja/docs/basics/response-codes
+     * @see https://developer.twitter.com/en/support/twitter-api/error-troubleshooting
      */
-    const ERROR_CODE_RATE_LIMIT_EXCEEDED = 88;
-    const ERROR_CODE_INVALID_OR_EXPIRED_TOKEN = 89;
-    const ERROR_CODE_UNABLE_TO_VERIFY_CREDENTIALS = 99;
-    const ERROR_CODE_OVER_CAPACITY = 130;
-    const ERROR_CODE_INTERNAL_ERROR = 131;
+    public const ERROR_CODE_RATE_LIMIT_EXCEEDED = 88;
+    public const ERROR_CODE_INVALID_OR_EXPIRED_TOKEN = 89;
+    public const ERROR_CODE_UNABLE_TO_VERIFY_CREDENTIALS = 99;
+    public const ERROR_CODE_OVER_CAPACITY = 130;
+    public const ERROR_CODE_INTERNAL_ERROR = 131;
 
-    const MAX_FOLLOWING_IDS_FETCH_COUNT = 5000;
+    public const MAX_FOLLOWING_IDS_FETCH_COUNT = 1000;
+
+    /*
+     * User object を取得する API に渡すパラメーター user.fields のオプションたち
+     * @see https://developer.twitter.com/en/docs/twitter-api/data-dictionary/object-model/user
+     */
+    public const USER_FIELDS_ID = 'id';
+    public const USER_FIELDS_NAME = 'name';
+    public const USER_FIELDS_USERNAME = 'username';
+    public const USER_FIELDS_CREATED_AT = 'created_at';
+    public const USER_FIELDS_DESCRIPTION = 'description';
+    public const USER_FIELDS_ENTITIES = 'entities';
+    public const USER_FIELDS_LOCATION = 'location';
+    public const USER_FIELDS_PINNED_TWEET_ID = 'pinned_tweet_id';
+    public const USER_FIELDS_PROFILE_IMAGE_URL = 'profile_image_url';
+    public const USER_FIELDS_PROTECTED = 'protected';
+    public const USER_FIELDS_PUBLIC_METRICS = 'public_metrics';
+    public const USER_FIELDS_URL = 'url';
+    public const USER_FIELDS_VERIFIED = 'verified';
+    public const USER_FIELDS_VERIFIED_TYPE = 'verified_type';
+    public const USER_FIELDS_WITHHELD = 'withheld';
 
     public function __construct(
         string $consumerKey,
@@ -41,16 +61,16 @@ class TwitterApiService extends AbstractService
         ?string $oauthTokenSecret = null
     ) {
         $this->oauth = new TwitterOAuth($consumerKey, $consumerSecret, $oauthToken, $oauthTokenSecret);
-        $this->oauth->setApiVersion('1.1');
+        $this->oauth->setApiVersion('2');
     }
 
     /**
-     * /verify_credentials のレスポンスからTwitterUserオブジェクトを生成する。
+     * レスポンスのUser objectからTwitterUserオブジェクトを生成する。
      *
      * @param array $data
      * @return AbstractTwitterUser
      */
-    protected static function createFromCredentialResponse(array $data): AbstractTwitterUser
+    protected static function createFromUserResponse(array $data): AbstractTwitterUser
     {
         return new class($data['id']) extends AbstractTwitterUser {
             public function __construct(string $id)
@@ -90,7 +110,7 @@ class TwitterApiService extends AbstractService
      * @param RequestToken $requestToken
      * @param string $oauthVerifier
      * @return AccessToken
-     * @throws TwitterApiErrorException
+     * @throws TwitterOAuthException
      */
     public function getAccessToken(RequestToken $requestToken, string $oauthVerifier): AccessToken
     {
@@ -103,148 +123,110 @@ class TwitterApiService extends AbstractService
     }
 
     /**
+     * access token による user 取得。75req/15min per user
      * @param AccessToken $accessToken
+     * @param array<self::USER_FIELDS_*> $userFields
      * @return AbstractTwitterUser
      * @throws TwitterApiErrorException
      */
-    public function verifyCredentials(
-        AccessToken $accessToken,
-        bool $includeEmail = false,
-        bool $includeEntities = false,
-        bool $skipStatus = false
-    ): AbstractTwitterUser {
+    public function getMe(AccessToken $accessToken, array $userFields): AbstractTwitterUser
+    {
         $this->setAccessToken($accessToken);
-        $result = $this->get('account/verify_credentials', [
-            'include_email' => $includeEmail,
-            'skip_status' => $skipStatus,
-            'include_entities' => $includeEntities,
+        $result = $this->get('users/me', [
+            'user.fields' => implode(',', $userFields),
         ]);
-        // 再帰的にarrayにキャストするために横着してJsonへのエンコードとデコードを行き来しています
-        return static::createFromCredentialResponse($result);
+        return static::createFromUserResponse($result['data']);
     }
 
     /**
+     * id による user 取得。900req/15min per user
      * @param AccessToken $accessToken
      * @param string $userId
+     * @param array<self::USER_FIELDS_*> $userFields
      * @return AbstractTwitterUser
      * @throws TwitterApiErrorException
      */
-    public function getUserById(AccessToken $accessToken, string $userId): AbstractTwitterUser
+    public function getUserById(AccessToken $accessToken, string $userId, array $userFields): AbstractTwitterUser
     {
         $this->setAccessToken($accessToken);
-        $result = $this->get('users/show', ['user_id' => $userId]);
-        // 再帰的にarrayにキャストするために横着してJsonへのエンコードとデコードを行き来しています
-        return static::createFromCredentialResponse($result);
-    }
-
-
-    /**
-     * @param AccessToken $accessToken
-     * @param string $screenName
-     * @return AbstractTwitterUser
-     * @throws TwitterApiErrorException
-     */
-    public function getUserByScreenName(AccessToken $accessToken, string $screenName): AbstractTwitterUser
-    {
-        $this->setAccessToken($accessToken);
-        $result = $this->get('users/show', ['screen_name' => $screenName]);
-        // 再帰的にarrayにキャストするために横着してJsonへのエンコードとデコードを行き来しています
-        return static::createFromCredentialResponse($result);
-    }
-
-    /**
-     * @param AccessToken $accessToken
-     * @return AccountSetting
-     * @throws TwitterApiErrorException
-     */
-    public function getAccountSettings(AccessToken $accessToken): AccountSetting
-    {
-        $this->setAccessToken($accessToken);
-        $result = $this->get('account/settings');
-        return new AccountSetting(
-            $result['time_zone']['tzinfo_name'],
-            $result['time_zone']['utc_offset'],
-            $result['language']
-        );
+        $result = $this->get("users/{$userId}", [
+            'user.fields' => implode(',', $userFields),
+        ]);
+        return static::createFromUserResponse($result['data']);
     }
 
     /**
      * フォローしているユーザのID(not screen_name)を取得する。
-     * 1回で最大5000件。
+     * 1回で最大1000件。15req/15min per user
      *
      * @param AccessToken $accessToken
+     * @param string $userId
      * @param int $count
-     * @param string|null $cursor
-     * @return array
+     * @param string|null $paginationToken next_token か previous_token のどちらかを渡す
+     * @throws TwitterApiErrorException
+     * @return array{ids: string[], result_count: int, next_token: string|null, previous_token: string|null}
+     *     ids: ユーザのIDの配列
+     *     result_count: 取得できたIDの数
+     *     next_token: 次のページへ進むためのトークン
+     *     previous_token: 前のページに戻るためのトークン
      */
     public function getFollowingIds(
         AccessToken $accessToken,
+        string $userId,
         int $count = self::MAX_FOLLOWING_IDS_FETCH_COUNT,
-        ?string $cursor = null
+        ?string $paginationToken = null
     ): array {
         $this->setAccessToken($accessToken);
         $params = [
-            'stringify_ids' => true,
-            'count' => $count,
+            'max_results' => $count,
+            'user.fields' => 'id',
         ];
-        if (!is_null($cursor)) {
-            $params['cursor'] = $cursor;
+        if ($paginationToken) {
+            $params['pagination_token'] = $paginationToken;
         }
-
-        $result = $this->get('friends/ids', $params);
+        $result = $this->get("users/{$userId}/following", $params);
         return [
-            'ids' => $result['ids'] ?? [],
-            'previous_cursor' => $result['previous_cursor_str'] ?? '0',
-            'next_cursor' => $result['next_cursor_str'] ?? '0',
+            'ids' => array_map(fn(array $user) => $user['id'], $result['data']),
+            'result_count' => $result['meta']['result_count'],
+            'next_token' => $result['meta']['next_token'] ?? null,
+            'previous_token' => $result['meta']['previous_token'] ?? null,
         ];
     }
 
     /**
      * ユーザーID(固定の数字ID)でフォローする
-     * 400/24h per user
+     * 50/15min per user
      *
      * @param AccessToken $accessToken
+     * @param string $userId
      * @param string $targetUserId
-     * @param bool $enableNotification
      * @throws TwitterApiErrorException
+     * @return array{following: bool, pending_follow: bool}
+     *     following: フォローできたかどうか。鍵垢の場合はfalseになる。
+     *     pending_follow: フォローリクエスト中かどうか。鍵垢の場合はtrueになる。
      */
     public function followByUserId(
         AccessToken $accessToken,
-        string $targetUserId,
-        bool $enableNotification = false // 通知登録
-    ): void
+        string $userId,
+        string $targetUserId
+    ): array
     {
         $this->setAccessToken($accessToken);
-        $this->post('friendships/create', ['user_id' => $targetUserId, 'follow' => $enableNotification]);
+        $result = $this->post("users/{$userId}/following", ['target_user_id' => $targetUserId], true);
+        return [
+            'following' => $result['data']['following'],
+            'pending_follow' => $result['data']['pending_follow'],
+        ];
     }
 
     /**
-     * 関係性を取得
-     * 15req / 15min per user
+     * 関係性を取得。v2 では [COMING SOON] になっているためここでも未実装
      * @param string[] $userIds max 100 ids.
      * @return Friendship[]
-     * @throws TwitterApiErrorException
      */
     public function getFriendshipsByUserIds(AccessToken $accessToken, array $userIds): array
     {
-        $this->setAccessToken($accessToken);
-        $result = $this->get('friendships/lookup', ['user_id' => implode(',', $userIds)]);
-        return array_map(fn(array $data) => Friendship::fromJson($data), $result);
-    }
-
-    /**
-     * 関係性を取得
-     * 15req / 15min per user
-     * @param AccessToken $accessToken
-     * @param string[] $screenNames
-     * @return Friendship[]
-     * @throws TwitterApiErrorException
-     */
-    public function getFriendshipsByScreenNames(AccessToken $accessToken, array $screenNames): array
-    {
-        $this->setAccessToken($accessToken);
-        $result = $this->get('friendships/lookup', ['screen_name' => implode(',', $screenNames)]);
-        return array_map(fn(array $data) => Friendship::fromJson($data), $result);
+        throw new RuntimeException('Not implemented yet in Twitter API v2.');
     }
 
     /**
@@ -264,17 +246,21 @@ class TwitterApiService extends AbstractService
     /**
      * @param string $path
      * @param array<string, mixed> $parameters
+     * @param bool $json
      * @return array
      * @throws TwitterApiErrorException
      */
-    protected function post(string $path, array $parameters = []): array
+    protected function post(string $path, array $parameters = [], bool $json = false): array
     {
-        $result = $this->oauth->post($path, $parameters);
+        $result = $this->oauth->post($path, $parameters, $json);
         $resultArr = Json::decode(Json::encode($result)); // 再帰的にキャストするために一度json文字列にしてから再度連想配列に戻す
         $this->handleErrorIfNeeded($resultArr);
         return $resultArr;
     }
 
+    /**
+     * @throws TwitterApiErrorException
+     */
     protected function handleErrorIfNeeded(array $result): void
     {
         if (!empty($result['errors'])) {

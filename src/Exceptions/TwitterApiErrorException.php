@@ -26,6 +26,15 @@ class TwitterApiErrorException extends \Exception
         $this->errors = $errors;
         return $this;
     }
+
+    public function has(int $errorCode): bool
+    {
+        foreach ($this->getErrors() as $error) {
+            // 実行回数超過の場合はリクエストを中断して処理を継続
+            if ($error['code'] === $errorCode) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
-
-
