@@ -123,17 +123,29 @@ class TwitterApiV2Service extends AbstractService
     }
 
     /**
+     * User object 取得系 API の user.fields に渡すパラメーターを制御する
+     * @return array<self::USER_FIELDS_*>
+     */
+    protected function getUserFields(): array
+    {
+        return [
+            self::USER_FIELDS_ID,
+            self::USER_FIELDS_NAME,
+            self::USER_FIELDS_USERNAME,
+        ];
+    }
+
+    /**
      * access token による user 取得。75req/15min per user
      * @param AccessToken $accessToken
-     * @param array<self::USER_FIELDS_*> $userFields
      * @return AbstractTwitterUser
      * @throws TwitterApiErrorException
      */
-    public function getMe(AccessToken $accessToken, array $userFields): AbstractTwitterUser
+    public function getMe(AccessToken $accessToken): AbstractTwitterUser
     {
         $this->setAccessToken($accessToken);
         $result = $this->get('users/me', [
-            'user.fields' => implode(',', $userFields),
+            'user.fields' => implode(',', $this->getUserFields()),
         ]);
         return static::createFromUserResponse($result['data']);
     }
@@ -142,15 +154,14 @@ class TwitterApiV2Service extends AbstractService
      * id による user 取得。900req/15min per user
      * @param AccessToken $accessToken
      * @param string $userId
-     * @param array<self::USER_FIELDS_*> $userFields
      * @return AbstractTwitterUser
      * @throws TwitterApiErrorException
      */
-    public function getUserById(AccessToken $accessToken, string $userId, array $userFields): AbstractTwitterUser
+    public function getUserById(AccessToken $accessToken, string $userId): AbstractTwitterUser
     {
         $this->setAccessToken($accessToken);
         $result = $this->get("users/{$userId}", [
-            'user.fields' => implode(',', $userFields),
+            'user.fields' => implode(',', $this->getUserFields()),
         ]);
         return static::createFromUserResponse($result['data']);
     }
@@ -179,7 +190,7 @@ class TwitterApiV2Service extends AbstractService
         $this->setAccessToken($accessToken);
         $params = [
             'max_results' => $count,
-            'user.fields' => 'id',
+            'user.fields' => self::USER_FIELDS_ID,
         ];
         if ($paginationToken) {
             $params['pagination_token'] = $paginationToken;
