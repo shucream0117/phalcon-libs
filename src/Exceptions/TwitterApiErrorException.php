@@ -8,7 +8,9 @@ namespace Shucream0117\PhalconLib\Exceptions;
 class TwitterApiErrorException extends \Exception
 {
     /** @var array<array<string, mixed>> */
-    protected array $errors;
+    protected array $errors = [];
+    /** @var string */
+    protected string $responseBody = '';
 
     /**
      * @return array<array<string, mixed>>
@@ -16,6 +18,14 @@ class TwitterApiErrorException extends \Exception
     public function getErrors(): array
     {
         return $this->errors;
+    }
+
+    /**
+     * @return string
+     */
+    public function getResponseBody(): string
+    {
+        return $this->responseBody;
     }
 
     /**
@@ -27,11 +37,19 @@ class TwitterApiErrorException extends \Exception
         return $this;
     }
 
+    /**
+     * @param string $responseBody
+     */
+    public function setResponseBody(string $responseBody): void
+    {
+        $this->responseBody = $responseBody;
+    }
+
     public function has(int $errorCode): bool
     {
         foreach ($this->getErrors() as $error) {
             // 実行回数超過の場合はリクエストを中断して処理を継続
-            if ($error['code'] === $errorCode) {
+            if (isset($error['code']) && $error['code'] === $errorCode) {
                 return true;
             }
         }

@@ -250,7 +250,7 @@ class TwitterApiV2Service extends AbstractService
     {
         $result = $this->oauth->get($path, $parameters);
         $resultArr = Json::decode(Json::encode($result)); // 再帰的にキャストするために一度json文字列にしてから再度連想配列に戻す
-        $this->handleErrorIfNeeded($resultArr);
+        $this->handleErrorIfNeeded($resultArr, $this->oauth->getLastHttpCode());
         return $resultArr;
     }
 
@@ -265,17 +265,50 @@ class TwitterApiV2Service extends AbstractService
     {
         $result = $this->oauth->post($path, $parameters, $json);
         $resultArr = Json::decode(Json::encode($result)); // 再帰的にキャストするために一度json文字列にしてから再度連想配列に戻す
-        $this->handleErrorIfNeeded($resultArr);
+        $this->handleErrorIfNeeded($resultArr, $this->oauth->getLastHttpCode());
         return $resultArr;
     }
 
     /**
      * @throws TwitterApiErrorException
      */
-    protected function handleErrorIfNeeded(array $result): void
+    protected function handleErrorIfNeeded(array $result, int $statusCode): void
     {
-        if (!empty($result['errors'])) {
-            throw (new TwitterApiErrorException())->setErrors($result['errors']);
+        if ($statusCode >= 400) {
+            // Twitter API v2 では error codes を含まないエラーフォーマットも存在する
+            // https://developer.twitter.com/en/support/twitter-api/error-troubleshooting
+            // 例:
+            // {
+            //     "title": "Too Many Requests",
+            //     "detail": "Too Many Requests",
+            //     "type": "about:blank",
+            //     "status": 429
+            // }
+            //
+            // 例:
+            // {
+            //     "errors": [
+            //         {
+            //             "parameters": {
+            //                 "id": ["01GZDJ5SB79E29NM1DBJR4MM0M"]
+            //             },
+            //             "message": "The `id` query parameter value [01GZDJ5SB79E29NM1DBJR4MM0M] is not valid"
+            //         }
+            //     ],
+            //     "title": "Invalid Request",
+            //     "detail": "One or more parameters to your request was invalid.",
+            //     "type": "https://api.twitter.com/2/problems/invalid-request"
+            // }
+            //
+            // type, title, detail はいつも返ってくると書いてある。それ以外のフィールドは可変らしい。この場合も考えて、例外の message にレスポンスを入れておく
+            $responseBody = Json::encode($result);
+            $exception = new TwitterApiErrorException($responseBody, $statusCode);
+            $exception->setResponseBody($responseBody);
+            // 通常のエラーレスポンスには errors の下に code などが入る
+            if (!empty($result['errors'])) {
+                $exception->setErrors($result['errors']);
+            }
+            throw $exception;
         }
     }
 }
