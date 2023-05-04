@@ -250,7 +250,7 @@ class TwitterApiV2Service extends AbstractService
     {
         $result = $this->oauth->get($path, $parameters);
         $resultArr = Json::decode(Json::encode($result)); // 再帰的にキャストするために一度json文字列にしてから再度連想配列に戻す
-        $this->handleErrorIfNeeded($resultArr);
+        $this->handleErrorIfNeeded($resultArr, $this->oauth->getLastHttpCode());
         return $resultArr;
     }
 
@@ -265,17 +265,34 @@ class TwitterApiV2Service extends AbstractService
     {
         $result = $this->oauth->post($path, $parameters, $json);
         $resultArr = Json::decode(Json::encode($result)); // 再帰的にキャストするために一度json文字列にしてから再度連想配列に戻す
-        $this->handleErrorIfNeeded($resultArr);
+        $this->handleErrorIfNeeded($resultArr, $this->oauth->getLastHttpCode());
         return $resultArr;
     }
 
     /**
      * @throws TwitterApiErrorException
      */
-    protected function handleErrorIfNeeded(array $result): void
+    protected function handleErrorIfNeeded(array $result, int $statusCode): void
     {
         if (!empty($result['errors'])) {
-            throw (new TwitterApiErrorException())->setErrors($result['errors']);
+            // Twitter API v2 では OpenAPI のバリデーターが返すエラーフォーマットも存在する
+            // https://developer.twitter.com/en/support/twitter-api/error-troubleshooting#error-information
+            // 例:
+            // {
+            //     "errors": [
+            //         {
+            //             "parameters": {
+            //                 "id": ["01GZDJ5SB79E29NM1DBJR4MM0M"]
+            //             },
+            //             "message": "The `id` query parameter value [01GZDJ5SB79E29NM1DBJR4MM0M] is not valid"
+            //         }
+            //     ],
+            //     "title": "Invalid Request",
+            //     "detail": "One or more parameters to your request was invalid.",
+            //     "type": "https://api.twitter.com/2/problems/invalid-request"
+            // }
+            // この場合も考えて、例外の message にレスポンスを入れておく
+            throw (new TwitterApiErrorException(Json::encode($result), $statusCode))->setErrors($result['errors']);
         }
     }
 }
