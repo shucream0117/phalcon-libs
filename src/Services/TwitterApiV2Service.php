@@ -274,9 +274,17 @@ class TwitterApiV2Service extends AbstractService
      */
     protected function handleErrorIfNeeded(array $result, int $statusCode): void
     {
-        if (!empty($result['errors'])) {
-            // Twitter API v2 では OpenAPI のバリデーターが返すエラーフォーマットも存在する
-            // https://developer.twitter.com/en/support/twitter-api/error-troubleshooting#error-information
+        if ($statusCode >= 400) {
+            // Twitter API v2 では error codes を含まないエラーフォーマットも存在する
+            // https://developer.twitter.com/en/support/twitter-api/error-troubleshooting
+            // 例:
+            // {
+            //     "title": "Too Many Requests",
+            //     "detail": "Too Many Requests",
+            //     "type": "about:blank",
+            //     "status": 429
+            // }
+            //
             // 例:
             // {
             //     "errors": [
@@ -291,8 +299,14 @@ class TwitterApiV2Service extends AbstractService
             //     "detail": "One or more parameters to your request was invalid.",
             //     "type": "https://api.twitter.com/2/problems/invalid-request"
             // }
-            // この場合も考えて、例外の message にレスポンスを入れておく
-            throw (new TwitterApiErrorException(Json::encode($result), $statusCode))->setErrors($result['errors']);
+            //
+            // type, title, detail はいつも返ってくると書いてある。それ以外のフィールドは可変らしい。この場合も考えて、例外の message にレスポンスを入れておく
+            $exception = new TwitterApiErrorException(Json::encode($result), $statusCode);
+            // 通常のエラーレスポンスには errors の下に code などが入る
+            if (!empty($result['errors'])) {
+                $exception->setErrors($result['errors']);
+            }
+            throw $exception;
         }
     }
 }

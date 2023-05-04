@@ -8,7 +8,7 @@ namespace Shucream0117\PhalconLib\Exceptions;
 class TwitterApiErrorException extends \Exception
 {
     /** @var array<array<string, mixed>> */
-    protected array $errors;
+    protected array $errors = [];
 
     /**
      * @return array<array<string, mixed>>
