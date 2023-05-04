@@ -302,7 +302,8 @@ class TwitterApiV2Service extends AbstractService
             //
             // type, title, detail はいつも返ってくると書いてある。それ以外のフィールドは可変らしい。この場合も考えて、例外の message にレスポンスを入れておく
             $responseBody = Json::encode($result);
-            $exception = new TwitterApiErrorException($responseBody, $statusCode, $responseBody);
+            $exception = new TwitterApiErrorException($responseBody, $statusCode);
+            $exception->setResponseBody($responseBody);
             // 通常のエラーレスポンスには errors の下に code などが入る
             if (!empty($result['errors'])) {
                 $exception->setErrors($result['errors']);

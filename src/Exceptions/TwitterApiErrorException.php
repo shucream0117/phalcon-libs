@@ -12,14 +12,7 @@ class TwitterApiErrorException extends \Exception
     /** @var array<array<string, mixed>> */
     protected array $errors = [];
     /** @var string */
-    protected string $responseBody;
-
-    public function __construct($message = "", $code = 0, $responseBody = "", Throwable $previous = null)
-    {
-
-        $this->responseBody = $responseBody;
-        parent::__construct($message, $code, $previous);
-    }
+    protected string $responseBody = '';
 
     /**
      * @return array<array<string, mixed>>
@@ -30,12 +23,28 @@ class TwitterApiErrorException extends \Exception
     }
 
     /**
+     * @return string
+     */
+    public function getResponseBody(): string
+    {
+        return $this->responseBody;
+    }
+
+    /**
      * @param array<array<string, mixed>> $errors
      */
     public function setErrors(array $errors): self
     {
         $this->errors = $errors;
         return $this;
+    }
+
+    /**
+     * @param string $responseBody
+     */
+    public function setResponseBody(string $responseBody): void
+    {
+        $this->responseBody = $responseBody;
     }
 
     public function has(int $errorCode): bool
