@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Shucream0117\PhalconLib\Exceptions;
 
-use Throwable;
-
 // 共通ライブラリではAutoErrorResponseInterfaceの実装を考えたくないので敢えてExceptionを継承している
 class TwitterApiErrorException extends \Exception
 {
