@@ -27,6 +27,42 @@ class ImageUtil
     }
 
     /**
+     * TODO 動作確認
+     * アスペクト比を保ったまま横幅を $widthPx にリサイズする
+     * @param AdapterInterface $image
+     * @param int $width
+     * @return AdapterInterface
+     */
+    public static function resizeByWidth(
+        AdapterInterface $image,
+        int $widthPx,
+        bool $avoidEnlarge = false
+    ): AdapterInterface {
+        if ($avoidEnlarge && $image->getWidth() <= $widthPx) {
+            return $image;
+        }
+        return $image->resize($widthPx, null, Enum::WIDTH);
+    }
+
+    /**
+     * TODO 動作確認
+     * アスペクト比を保ったまま縦幅を $heightPx にリサイズする
+     * @param AdapterInterface $image
+     * @param int $heightPx
+     * @return AdapterInterface
+     */
+    public static function resizeByHeight(
+        AdapterInterface $image,
+        int $heightPx,
+        bool $avoidEnlarge = false
+    ): AdapterInterface {
+        if ($avoidEnlarge && $image->getHeight() <= $heightPx) {
+            return $image;
+        }
+        return $image->resize(null, $heightPx, Enum::HEIGHT);
+    }
+
+    /**
      * @param AdapterInterface $image
      * @param string $colorCode
      * @return AdapterInterface
@@ -63,6 +99,44 @@ class ImageUtil
             $offsetY = 0;
         }
         $image->crop($length, $length, (int)round($offsetX), (int)round($offsetY));
+        return $image;
+    }
+
+    /**
+     * TODO 動作確認
+     * 高さを指定し、横幅はそのままで中央から切り抜く
+     * @param AdapterInterface $image
+     * @param int $heightPx
+     * @return AdapterInterface
+     */
+    public static function cropByHeight(AdapterInterface $image, int $heightPx): AdapterInterface
+    {
+        $imageWidth = $image->getWidth();
+        $imageHeight = $image->getHeight();
+        if ($imageHeight <= $heightPx) {
+            return $image;
+        }
+        $offsetY = ($imageHeight - $heightPx) / 2;
+        $image->crop($imageWidth, $heightPx, 0, (int)round($offsetY));
+        return $image;
+    }
+
+    /**
+     * TODO 動作確認
+     * 横幅を指定し、高さはそのままで中央から切り抜く
+     * @param AdapterInterface $image
+     * @param int $widthPx
+     * @return AdapterInterface
+     */
+    public static function cropByWidth(AdapterInterface $image, int $widthPx): AdapterInterface
+    {
+        $imageWidth = $image->getWidth();
+        $imageHeight = $image->getHeight();
+        if ($imageWidth <= $widthPx) {
+            return $image;
+        }
+        $offsetX = ($imageWidth - $widthPx) / 2;
+        $image->crop($widthPx, $imageHeight, (int)round($offsetX), 0);
         return $image;
     }
 }
