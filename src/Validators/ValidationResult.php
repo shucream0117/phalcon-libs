@@ -31,7 +31,10 @@ class ValidationResult
         if (is_null($key)) {
             return $this->validated;
         }
-        return $this->validated[$key] ?? $default;
+        if (array_key_exists($key, $this->validated)) {
+            return $this->validated[$key];
+        }
+        return $default;
     }
 
     /**

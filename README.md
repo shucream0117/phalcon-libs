@@ -10,10 +10,10 @@ $ composer require shucream0117/phalcon-libs
 
 # Testing
 ```console
-$ docker-compose run --rm app vendor/bin/phpunit
+$ docker compose run --rm app vendor/bin/phpunit
 ```
 
 # Composer update
 ```console
-$ docker-compose run --rm app composer update
+$ docker compose run --rm app composer update
 ```
