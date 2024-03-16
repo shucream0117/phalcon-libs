@@ -24,7 +24,17 @@ class ConstantsTest extends TestBase
                 if ($keys = (array_keys($text))) {
                     sort($constants);
                     sort($keys);
-                    $this->assertEquals($keys, $constants);
+                    $this->assertEqualsCanonicalizing($keys, $constants);
+                }
+            }
+
+            if ($textByLang = $reflection->getStaticProperties()['textByLang'] ?? null) {
+                foreach ($textByLang as $lang => $text) {
+                    if ($keys = (array_keys($text))) {
+                        sort($constants);
+                        sort($keys);
+                        $this->assertEqualsCanonicalizing($keys, $constants);
+                    }
                 }
             }
         }

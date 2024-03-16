@@ -24,8 +24,27 @@ trait ConstantsTrait
             throw new RuntimeException('static $text is required by ConstantsWithTextTrait');
         }
 
-        if (!empty(static::$text[$constant])) {
+        if (array_key_exists($constant, static::$text)) {
             return static::$text[$constant];
+        }
+        throw new InvalidArgumentException("no such constant code: $constant");
+    }
+
+    /**
+     * static $text という配列を定義すると定数にマッチするテキストを返してくれる。
+     * @param string|int $constant 定数の値
+     * @return string 定数に対応するテキスト
+     * @throws RuntimeException static $text が未定義の場合に投げる
+     * @throws InvalidArgumentException 定義されていない定数を指定された場合に投げる
+     */
+    public static function getTextByLang($constant, string $language): string
+    {
+        if (!property_exists(get_class(), 'textByLang')) {
+            throw new RuntimeException('static $textByLang is required by ConstantsWithTextTrait');
+        }
+
+        if (array_key_exists($constant, static::$textByLang)) {
+            return static::$textByLang[$constant];
         }
         throw new InvalidArgumentException("no such constant code: $constant");
     }
