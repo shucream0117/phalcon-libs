@@ -43,8 +43,8 @@ trait ConstantsTrait
             throw new RuntimeException('static $textByLang is required by ConstantsWithTextTrait');
         }
 
-        if (array_key_exists($constant, static::$textByLang)) {
-            return static::$textByLang[$constant];
+        if (array_key_exists($language, static::$textByLang) && array_key_exists($constant, static::$textByLang[$language])) {
+            return static::$textByLang[$language][$constant];
         }
         throw new InvalidArgumentException("no such constant code: $constant");
     }
