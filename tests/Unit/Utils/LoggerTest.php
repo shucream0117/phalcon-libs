@@ -79,4 +79,31 @@ class LoggerTest extends TestBase
         $this->assertStringContainsString('test warning', file_get_contents($this->fileWarning));
         $this->assertFileDoesNotExist($this->fileInfoAndDebug); // 何も出力されないのでファイルがない
     }
+
+    public function testLogWithContext()
+    {
+        $logger = new Logger('logger-name-test', Logger::LEVEL_CRITICAL, [
+            Logger::LEVEL_CRITICAL => $this->fileCritical,
+        ]);
+
+        // contextの書き出しもテスト
+        $context = [
+            'int' => 1,
+            'string' => 'string',
+            'array' => ['a', 'b', 'c'],
+            'nested_array' => [
+                'key1' => [
+                    'key2' => 'value',
+                ],
+            ],
+            'object' => new \stdClass(),
+            'null' => null,
+            'bool' => true,
+        ];
+        $logger->critical('test info with context', $context);
+        $logStr = file_get_contents($this->fileCritical);
+
+        $expected = '"context":{"int":1,"string":"string","array":["a","b","c"],"nested_array":{"key1":{"key2":"value"}},"object":{},"null":null,"bool":true}';
+        $this->assertStringContainsString($expected, $logStr);
+    }
 }
