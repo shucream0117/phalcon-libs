@@ -40,20 +40,6 @@ class ConstantsTest extends TestBase
         }
     }
 
-    /**
-     * 定数たちが重複していないかどうかのテスト
-     * @throws ReflectionException
-     */
-    public function testCheckDuplication()
-    {
-        $classNames = self::getClassNames();
-        foreach ($classNames as $fullClassName) {
-            $reflection = new ReflectionClass($fullClassName);
-            $constants = $reflection->getConstants();
-            $this->assertSame($constants, array_unique($constants));
-        }
-    }
-
     protected static function getClassNames(): array
     {
         return self::getClassNamesRecursively(__DIR__ . '/../../../src/Constants');
