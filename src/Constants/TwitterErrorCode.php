@@ -10,9 +10,9 @@ class TwitterErrorCode
      * エラーコードたち
      * @see https://developer.twitter.com/en/support/twitter-api/error-troubleshooting
      */
-    public const ERROR_CODE_RATE_LIMIT_EXCEEDED = 88;
-    public const ERROR_CODE_INVALID_OR_EXPIRED_TOKEN = 89;
-    public const ERROR_CODE_UNABLE_TO_VERIFY_CREDENTIALS = 99;
-    public const ERROR_CODE_OVER_CAPACITY = 130;
-    public const ERROR_CODE_INTERNAL_ERROR = 131;
+    public const RATE_LIMIT_EXCEEDED = 88;
+    public const INVALID_OR_EXPIRED_TOKEN = 89;
+    public const UNABLE_TO_VERIFY_CREDENTIALS = 99;
+    public const OVER_CAPACITY = 130;
+    public const INTERNAL_ERROR = 131;
 }

@@ -65,7 +65,7 @@ class TwitterApiErrorException extends \Exception
     public function hasUnauthorizedError(): bool
     {
         // v1.1
-        if ($this->has(TwitterErrorCode::ERROR_CODE_INVALID_OR_EXPIRED_TOKEN)) {
+        if ($this->has(TwitterErrorCode::INVALID_OR_EXPIRED_TOKEN)) {
             return true;
         }
 

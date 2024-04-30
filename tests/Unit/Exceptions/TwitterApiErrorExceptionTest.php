@@ -19,12 +19,12 @@ class TwitterApiErrorExceptionTest extends TestBase
          * v1.1 の場合
          */
         $e->setErrors([
-            ['code' => TwitterErrorCode::ERROR_CODE_INVALID_OR_EXPIRED_TOKEN],
+            ['code' => TwitterErrorCode::INVALID_OR_EXPIRED_TOKEN],
         ]);
         $this->assertTrue($e->hasUnauthorizedError());
 
         $e->setErrors([
-            ['code' => TwitterErrorCode::ERROR_CODE_INTERNAL_ERROR],
+            ['code' => TwitterErrorCode::INTERNAL_ERROR],
         ]);
         $this->assertFalse($e->hasUnauthorizedError());
 
