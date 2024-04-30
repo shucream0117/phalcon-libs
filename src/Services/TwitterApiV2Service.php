@@ -22,16 +22,6 @@ class TwitterApiV2Service extends AbstractService
 {
     private TwitterOAuth $oauth;
 
-    /*
-     * エラーコードたち
-     * @see https://developer.twitter.com/en/support/twitter-api/error-troubleshooting
-     */
-    public const ERROR_CODE_RATE_LIMIT_EXCEEDED = 88;
-    public const ERROR_CODE_INVALID_OR_EXPIRED_TOKEN = 89;
-    public const ERROR_CODE_UNABLE_TO_VERIFY_CREDENTIALS = 99;
-    public const ERROR_CODE_OVER_CAPACITY = 130;
-    public const ERROR_CODE_INTERNAL_ERROR = 131;
-
     public const MAX_FOLLOWING_IDS_FETCH_COUNT = 1000;
 
     /*
@@ -300,10 +290,11 @@ class TwitterApiV2Service extends AbstractService
             //     "type": "https://api.twitter.com/2/problems/invalid-request"
             // }
             //
-            // type, title, detail はいつも返ってくると書いてある。それ以外のフィールドは可変らしい。この場合も考えて、例外の message にレスポンスを入れておく
-            $responseBody = Json::encode($result);
+            // type, title, detail はいつも返ってくると書いてある。それ以外のフィールドは可変らしい。
+
+            $responseBody = Json::encode($result); // 例外のメッセージに含めるために文字列化
             $exception = new TwitterApiErrorException($responseBody, $statusCode);
-            $exception->setResponseBody($responseBody);
+            $exception->setResponseBody($result); // arrayでも入れておく
             // 通常のエラーレスポンスには errors の下に code などが入る
             if (!empty($result['errors'])) {
                 $exception->setErrors($result['errors']);
