@@ -22,6 +22,7 @@ class Imgix
     const FIT_FILL = 'fill';
     const FIT_FILLMAX = 'fillmax';
     const FIT_SCALE = 'scale';
+    const FIT_FACE_AREA = 'facearea';
 
     const FILL_SOLID = 'solid';
     const FILL_BLUR = 'blur';
