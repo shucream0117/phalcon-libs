@@ -57,6 +57,25 @@ class PayJpService extends AbstractService
     const SUBSCRIPTION_STATUS_CANCELED = 'canceled';
     const SUBSCRIPTION_STATUS_TRIAL = 'trial';
 
+    /*
+     * エラー
+     * @see https://pay.jp/docs/api/#%E3%83%AC%E3%82%B9%E3%83%9D%E3%83%B3%E3%82%B9
+     */
+    // エラー type
+    const ERROR_TYPE_CLIENT = 'client_error'; // リクエストエラー
+    const ERROR_TYPE_CARD = 'card_error'; // カードエラー
+    const ERROR_TYPE_SERVER = 'server_error'; // サーバーエラー
+    const ERROR_TYPE_NOT_ALLOWED_METHOD = 'not_allowed_method_error'; // 許可されていないメソッドエラー
+    const ERROR_TYPE_AUTH = 'auth_error'; // 認証エラー
+    const ERROR_TYPE_INVALID_REQUEST = 'invalid_request_error'; // 無効なリクエスト
+
+    // エラー code
+    const ERROR_CODE_EXPIRED_CARD = 'expired_card'; // カードの有効期限切れ
+    const ERROR_CODE_CARD_DECLINED = 'card_declined'; // カードが拒否された
+    const ERROR_CODE_FLAGGED = 'card_flagged'; // カードを原因としたエラーが続いたことによる一時的なロックアウト
+    const ERROR_CODE_PROCESSING_ERROR = 'processing_error'; // 決済ネットワーク上で生じたエラー
+
+
     public function __construct(string $apiKey)
     {
         Payjp::setApiKey($apiKey);
