@@ -48,22 +48,28 @@ class LoggerTest extends TestBase
         return $outputLine;
     }
 
-    /**
-     * @depends testLogFile
-     * @param string $outputLine
-     */
-    public function testJsonFormatter(string $outputLine): void
+    public function testJsonFormatter(): void
     {
-        $decodedLog = Json::decode($outputLine);
-        $this->assertArrayHasKey('type', $decodedLog);
-        $this->assertArrayHasKey('message', $decodedLog);
-        $this->assertArrayHasKey('timestamp', $decodedLog);
-        $this->assertArrayHasKey('context', $decodedLog);
+        $logger = new Logger('logger-name-test', Logger::LEVEL_DEBUG, [
+            Logger::LEVEL_CRITICAL => $this->fileCritical,
+            Logger::LEVEL_WARNING => $this->fileWarning,
+            Logger::LEVEL_INFO => $this->fileInfoAndDebug,
+            Logger::LEVEL_DEBUG => $this->fileInfoAndDebug, // 同じファイルでもいけるというのを試しておく
+        ]);
+        $logger->critical('test critical');
+        $logger->warning('test warning');
+        $logger->info('test info');
+        $logger->debug('test debug');
+
 
         // タイムスタンプの形式を確認
         // "2024-04-05T15:02:56+00:00" のような形式を想定するため、パターンマッチで確認
-        $pattern = '/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}$/';
-        $this->assertMatchesRegularExpression($pattern, $decodedLog['timestamp']);
+        $timestampPattern = '/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}$/';
+
+        $criticalLog = Json::decode(file_get_contents($this->fileCritical));
+        $this->assertSame('critical', $criticalLog['type']);
+        $this->assertSame('test critical', $criticalLog['message']);
+        $this->assertMatchesRegularExpression($timestampPattern, $criticalLog['timestamp']);
     }
 
     public function testLogLevel(): void
