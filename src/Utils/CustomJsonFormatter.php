@@ -16,7 +16,7 @@ class CustomJsonFormatter extends \Phalcon\Logger\Formatter\Json
          * ついでにデフォルトのフォーマッターが出力してくれない context の内容も出力する。
          */
         $data = [
-            'type' => $item->getType(),
+            'type' => $item->getName(),
             'message' => $item->getMessage(),
             'timestamp' => $this->getFormattedDate(), // "2024-04-05T15:02:56+00:00" のような形式
             'context' => $item->getContext(),
