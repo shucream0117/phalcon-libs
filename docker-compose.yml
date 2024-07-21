@@ -1,5 +1,3 @@
-version: '3'
-
 services:
   # for executing unit test
   app:
