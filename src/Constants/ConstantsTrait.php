@@ -9,6 +9,11 @@ use ReflectionClass;
 use RuntimeException;
 
 // 定数クラスで使うと便利になるトレイト
+
+/**
+ * @property array $text
+ * @property array $textByLang
+ */
 trait ConstantsTrait
 {
     /**
@@ -43,8 +48,9 @@ trait ConstantsTrait
             throw new RuntimeException('static $textByLang is required by ConstantsWithTextTrait');
         }
 
-        if (array_key_exists($language, static::$textByLang) && array_key_exists($constant, static::$textByLang[$language])) {
-            return static::$textByLang[$language][$constant];
+        if (array_key_exists($constant, static::$textByLang)
+            && array_key_exists($language, static::$textByLang[$constant])) {
+            return static::$textByLang[$constant][$language];
         }
         throw new InvalidArgumentException("no such constant code: $constant");
     }
