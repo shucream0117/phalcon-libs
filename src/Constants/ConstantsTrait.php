@@ -55,12 +55,16 @@ trait ConstantsTrait
         throw new InvalidArgumentException("no such constant code: $constant");
     }
 
+    /**
+     * @deprecated
+     */
     public static function getAsList(): array
     {
         return array_values(self::getAsAssocArray());
     }
 
     /**
+     * @deprecated
      * @return array
      */
     public static function getAsAssocArray(): array
