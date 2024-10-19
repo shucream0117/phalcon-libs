@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shucream0117\PhalconLib\Models\Behaviors;
 
-use DateTime;
+use DateTimeImmutable;
 use Exception;
 use Phalcon\Mvc\Model\Behavior\Timestampable;
 use Shucream0117\PhalconLib\Utils\Date;
@@ -30,7 +30,7 @@ trait TimestampTrait
         return new Timestampable([
             'beforeCreate' => [
                 'field' => static::$COLUMN_CREATED_AT,
-                'generator' => fn() => Date::mysqlDatetimeFormat(Date::createDateTime()),
+                'generator' => fn() => Date::mysqlDatetimeFormat(Date::createDateTimeImmutable()),
             ],
         ]);
     }
@@ -40,30 +40,30 @@ trait TimestampTrait
         return new Timestampable([
             'beforeCreate' => [
                 'field' => static::$COLUMN_UPDATED_AT,
-                'format' => Date::mysqlDatetimeFormat(Date::createDateTime()),
+                'format' => Date::mysqlDatetimeFormat(Date::createDateTimeImmutable()),
             ],
             'beforeUpdate' => [
                 'field' => static::$COLUMN_UPDATED_AT,
-                'generator' => fn() => Date::mysqlDatetimeFormat(Date::createDateTime()),
+                'generator' => fn() => Date::mysqlDatetimeFormat(Date::createDateTimeImmutable()),
             ],
         ]);
     }
 
     /**
-     * @return DateTime
+     * @return DateTimeImmutable
      * @throws Exception
      */
-    public function getCreatedAt(): DateTime
+    public function getCreatedAt(): DateTimeImmutable
     {
-        return Date::createDateTime($this->created_at);
+        return Date::createDateTimeImmutable($this->created_at);
     }
 
     /**
-     * @return DateTime
+     * @return DateTimeImmutable
      * @throws Exception
      */
-    public function getUpdatedAt(): DateTime
+    public function getUpdatedAt(): DateTimeImmutable
     {
-        return Date::createDateTime($this->updated_at);
+        return Date::createDateTimeImmutable($this->updated_at);
     }
 }
