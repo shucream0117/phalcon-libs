@@ -12,6 +12,7 @@ use Payjp\Error\Base as PayJpErrorBase;
 use Payjp\Payjp;
 use Payjp\Plan;
 use Payjp\Subscription;
+use Payjp\Token;
 use Shucream0117\PhalconLib\Entities\PayJp\Error as PayJpError;
 use Shucream0117\PhalconLib\Exceptions\InvalidApiResponseFormatException;
 use Shucream0117\PhalconLib\Exceptions\SameCreditCardAlreadyRegisteredException;
@@ -20,6 +21,9 @@ class PayJpService extends AbstractService
 {
     const CURRENCY_JPY = 'jpy';
 
+    /*
+     * クレジットカード種別
+     */
     const BRAND_VISA = 'Visa';
     const BRAND_MASTER_CARD = 'MasterCard';
     const BRAND_JCB = 'JCB';
@@ -27,6 +31,9 @@ class PayJpService extends AbstractService
     const BRAND_DINERS_CLUB = 'Diners Club';
     const BRAND_DISCOVER = 'Discover';
 
+    /*
+     * ウェブフックイベント
+     */
     const WEBHOOK_EVENT_TYPE_CHARGE_SUCCEEDED = 'charge.succeeded';
     const WEBHOOK_EVENT_TYPE_CHARGE_FAILED = 'charge.failed';
     const WEBHOOK_EVENT_TYPE_CHARGE_UPDATED = 'charge.updated';
@@ -52,10 +59,23 @@ class PayJpService extends AbstractService
     const WEBHOOK_EVENT_TYPE_TRANSFER_SUCCEEDED = 'transfer.succeeded';
     const WEBHOOK_EVENT_TYPE_TENANT_UPDATED = 'tenant.updated';
 
+    /*
+     * サブスクリプションステータス
+     */
     const SUBSCRIPTION_STATUS_ACTIVE = 'active';
     const SUBSCRIPTION_STATUS_PAUSED = 'paused';
     const SUBSCRIPTION_STATUS_CANCELED = 'canceled';
     const SUBSCRIPTION_STATUS_TRIAL = 'trial';
+
+
+    /*
+     * 3Dセキュア認証ステータス
+     */
+    const THREE_D_SECURE_STATUS_VERIFIED = 'verified'; // 成功
+    const THREE_D_SECURE_STATUS_UNVERIFIED = 'unverified'; // 未認証
+    const THREE_D_SECURE_STATUS_ATTEMPTED = 'attempted'; // アテンプト
+    const THREE_D_SECURE_STATUS_FAILED = 'failed'; // 失敗
+    const THREE_D_SECURE_STATUS_ERROR = 'error'; // エラー
 
     /*
      * エラー
@@ -74,6 +94,7 @@ class PayJpService extends AbstractService
     const ERROR_CODE_CARD_DECLINED = 'card_declined'; // カードが拒否された
     const ERROR_CODE_FLAGGED = 'card_flagged'; // カードを原因としたエラーが続いたことによる一時的なロックアウト
     const ERROR_CODE_PROCESSING_ERROR = 'processing_error'; // 決済ネットワーク上で生じたエラー
+    const ERROR_CODE_INVALID_THREE_D_SECURE_STATE = 'invalid_three_d_secure_state'; // 3Dセキュア中に二重に処理されるなど不正な遷移をした
 
 
     public function __construct(string $apiKey)
@@ -768,5 +789,36 @@ class PayJpService extends AbstractService
         } catch (PayJpErrorBase $e) {
             throw $e;
         }
+    }
+
+    /**
+     * Tokenオブジェクトを取得
+     *
+     * @param string $id
+     * @return Token|null
+     * @throws PayJpErrorBase
+     */
+    public function getTokenById(string $id): ?Token
+    {
+        try {
+            return Token::retrieve($id);
+        } catch (PayJpErrorBase $e) {
+            $error = PayJpError::createFromThrownError($e);
+            if ($error->getErrorCode() === PayJpError::INVALID_ID) {
+                return null;
+            }
+            throw $e; // 対象が存在しないエラーではない場合、異常なので投げ直す
+        }
+    }
+
+    /**
+     * 3Dセキュアの完了処理
+     *
+     * @param Token $token
+     * @return Token
+     */
+    public function completeThreeDSecureByToken(Token $token): Token
+    {
+        return $token->tdsFinish();
     }
 }
