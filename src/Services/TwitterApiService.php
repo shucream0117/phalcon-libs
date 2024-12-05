@@ -248,6 +248,23 @@ class TwitterApiService extends AbstractService
     }
 
     /**
+     * プロフィール更新
+     * @see https://developer.x.com/en/docs/x-api/v1/accounts-and-users/manage-account-settings/api-reference/post-account-update_profile
+     *
+     * @param AccessToken $accessToken
+     * @param array<string, mixed> $params
+     * @param bool $skipStatus
+     * @return AbstractTwitterUser
+     * @throws TwitterApiErrorException
+     */
+    public function updateProfile(AccessToken $accessToken, array $params, bool $skipStatus = true): AbstractTwitterUser
+    {
+        $this->setAccessToken($accessToken);
+        $result = $this->post('account/update_profile', array_merge($params, ['skip_status' => $skipStatus]));
+        return static::createFromCredentialResponse($result);
+    }
+
+    /**
      * @param string $path
      * @param array<string, mixed> $parameters
      * @return array
