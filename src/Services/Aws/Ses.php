@@ -59,7 +59,7 @@ class Ses implements EmailTransmitterInterface
         ]);
     }
 
-    public function sendTextMessage(string $to, string $subject, string $body)
+    public function sendTextMessage(string $to, string $subject, string $body): Result
     {
         return $this->sendTextMessageToMany([$to], $subject, $body);
     }
