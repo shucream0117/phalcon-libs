@@ -820,7 +820,7 @@ class PayJpService extends AbstractService
     }
 
     /**
-     * 3Dセキュアの完了処理
+     * 3Dセキュアの完了処理(Token)
      *
      * @param Token $token
      * @return Token
@@ -828,5 +828,16 @@ class PayJpService extends AbstractService
     public function completeThreeDSecureByToken(Token $token): Token
     {
         return $token->tdsFinish();
+    }
+
+    /**
+     * 3Dセキュアの完了処理(Charge)
+     *
+     * @param Charge $charge
+     * @return Charge
+     */
+    public function completeThreeDSecureByCharge(Charge $charge): Charge
+    {
+        return $charge->tdsFinish();
     }
 }
