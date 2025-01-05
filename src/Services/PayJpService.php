@@ -264,14 +264,20 @@ class PayJpService extends AbstractService
      * @return Charge
      * @throws PayJpErrorBase
      */
-    public function chargeWithCapture(Customer $customer, Card $card, int $amount, array $metadata = []): Charge
-    {
+    public function chargeWithCapture(
+        Customer $customer,
+        Card $card,
+        int $amount,
+        bool $threeDSecure = false,
+        array $metadata = []
+    ): Charge {
         return $this->charge([
             'customer' => $customer->offsetGet('id'),
             'card' => $card->offsetGet('id'),
             'amount' => $amount,
             'currency' => self::CURRENCY_JPY,
             'capture' => true,
+            'three_d_secure' => $threeDSecure,
             'metadata' => $metadata,
         ]);
     }
@@ -292,6 +298,7 @@ class PayJpService extends AbstractService
         Card $card,
         int $amount,
         int $expiryDays,
+        bool $threeDSecure = false,
         array $metadata = []
     ): Charge {
         return $this->charge([
@@ -301,6 +308,7 @@ class PayJpService extends AbstractService
             'currency' => self::CURRENCY_JPY,
             'capture' => false,
             'expiry_days' => $expiryDays,
+            'three_d_secure' => $threeDSecure,
             'metadata' => $metadata,
         ]);
     }
