@@ -255,6 +255,25 @@ class PayJpService extends AbstractService
     }
 
     /**
+     * カード情報を更新
+     *
+     * @param Card $card
+     * @param array<string, mixed> $params
+     * @return Card
+     */
+    public function updateCard(Card $card, array $params): Card
+    {
+        if (!$params) {
+            return $card;
+        }
+        foreach ($params as $key => $value) {
+            $card[$key] = $value;
+        }
+        $card->save();
+        return $card;
+    }
+
+    /**
      * 支払いを行う(即確定させる)
      *
      * @param Customer $customer
