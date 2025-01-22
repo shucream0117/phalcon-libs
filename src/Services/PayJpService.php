@@ -12,6 +12,7 @@ use Payjp\Error\Base as PayJpErrorBase;
 use Payjp\Payjp;
 use Payjp\Plan;
 use Payjp\Subscription;
+use Payjp\ThreeDSecureRequest;
 use Payjp\Token;
 use Shucream0117\PhalconLib\Entities\PayJp\Error as PayJpError;
 use Shucream0117\PhalconLib\Exceptions\InvalidApiResponseFormatException;
@@ -858,5 +859,78 @@ class PayJpService extends AbstractService
     public function completeThreeDSecureByCharge(Charge $charge): Charge
     {
         return $charge->tdsFinish();
+    }
+
+    /**
+     * カードを指定して3Dセキュアリクエストを作成
+     *
+     * @param Card $card
+     * @return ThreeDSecureRequest
+     * @see https://pay.jp/docs/api/#3d%E3%82%BB%E3%82%AD%E3%83%A5%E3%82%A2%E3%83%AA%E3%82%AF%E3%82%A8%E3%82%B9%E3%83%88%E3%82%92%E4%BD%9C%E6%88%90
+     */
+    public function createThreeDSecureRequest(Card $card): ThreeDSecureRequest
+    {
+        return ThreeDSecureRequest::create([
+            'resource_id' => $card['id'],
+        ]);
+    }
+
+    /**
+     * 3Dセキュアリクエストを取得
+     *
+     * @param string $id 'tdsr_xxxxx' 形式
+     * @return ThreeDSecureRequest|null
+     * @throws PayJpErrorBase
+     */
+    public function getThreeDSecureRequestById(string $id): ?ThreeDSecureRequest
+    {
+        try {
+            return ThreeDSecureRequest::retrieve($id);
+        } catch (PayJpErrorBase $e) {
+            $error = PayJpError::createFromThrownError($e);
+            if ($error->getErrorCode() === PayJpError::INVALID_ID) {
+                return null;
+            }
+            throw $e; // 対象が存在しないエラーではない場合、異常なので投げ直す
+        }
+    }
+
+    /**
+     * 3Dセキュアリクエストのリストを取得する
+     * @param int $limit
+     * @param int $offset
+     * @param int|null $sinceTimestamp
+     * @param int|null $untilTimestamp
+     * @param string|null $resourceId カードIDやChargeIDなど
+     * @param string|null $tenantId
+     * @return Collection
+     */
+    public function getThreeDSecureRequestList(
+        int $limit = 100,
+        int $offset = 0,
+        ?int $sinceTimestamp = null,
+        ?int $untilTimestamp = null,
+        ?string $resourceId = null,
+        ?string $tenantId = null
+    ): Collection {
+        $params = [
+            'limit' => $limit,
+            'offset' => $offset,
+        ];
+        if (!is_null($sinceTimestamp)) {
+            $params['since'] = $sinceTimestamp;
+        }
+        if (!is_null($untilTimestamp)) {
+            $params['until'] = $untilTimestamp;
+        }
+        if (!is_null($resourceId)) {
+            $params['resource_id'] = $resourceId;
+        }
+        if (!is_null($tenantId)) {
+            $params['tenant_id'] = $tenantId;
+        }
+        /** @var Collection $result */
+        $result = ThreeDSecureRequest::all($params);
+        return $result;
     }
 }
