@@ -96,6 +96,11 @@ class PayJpService extends AbstractService
     const ERROR_CODE_FLAGGED = 'card_flagged'; // カードを原因としたエラーが続いたことによる一時的なロックアウト
     const ERROR_CODE_PROCESSING_ERROR = 'processing_error'; // 決済ネットワーク上で生じたエラー
     const ERROR_CODE_INVALID_THREE_D_SECURE_STATE = 'invalid_three_d_secure_state'; // 3Dセキュア中に二重に処理されるなど不正な遷移をした
+    const ERROR_CODE_THREE_D_SECURE_INCOMPLETE = 'three_d_secure_incompleted'; // 3Dセキュアフローが完了していない状態で別の操作を行った
+    const ERROR_CODE_THREE_D_SECURE_FAILED = 'three_d_secure_failed'; // 3Dセキュア認証に失敗した
+    const ERROR_CODE_NOT_IN_THREE_D_SECURE_FLOW  = 'not_in_three_d_secure_flow'; // 3Dセキュア対象外の支払いか、3Dセキュアフローが時間切れになった
+    const ERROR_CODE_UNVERIFIED_TOKEN = 'unverified_token'; // 3Dセキュアが完了していないトークンで支払いが行われた
+    const ERROR_CODE_THREE_D_SECURE_EXPIRED = 'three_d_secure_expired'; // 3Dセキュアの認証完了期限が切れている
 
 
     public function __construct(string $apiKey)
