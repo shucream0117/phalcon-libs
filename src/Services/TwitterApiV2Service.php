@@ -79,11 +79,16 @@ class TwitterApiV2Service extends AbstractService
     /**
      * @param string $callbackUrl
      * @return RequestToken
-     * @throws TwitterOAuthException
+     * @throws TwitterApiErrorException
      */
     public function getRequestToken(string $callbackUrl): RequestToken
     {
-        $result = $this->oauth->oauth('oauth/request_token', ['oauth_callback' => $callbackUrl]);
+        try {
+            $result = $this->oauth->oauth('oauth/request_token', ['oauth_callback' => $callbackUrl]);
+        } catch (TwitterOAuthException $e) {
+            throw TwitterApiErrorException::createFromTwitterOAuthException($e);
+        }
+        $this->handleErrorIfNeeded($result, $this->oauth->getLastHttpCode());
         return new RequestToken($result['oauth_token'], $result['oauth_token_secret']);
     }
 
@@ -100,12 +105,17 @@ class TwitterApiV2Service extends AbstractService
      * @param RequestToken $requestToken
      * @param string $oauthVerifier
      * @return AccessToken
-     * @throws TwitterOAuthException
+     * @throws TwitterApiErrorException
      */
     public function getAccessToken(RequestToken $requestToken, string $oauthVerifier): AccessToken
     {
         $this->oauth->setOauthToken($requestToken->getToken(), $requestToken->getSecret());
-        $result = $this->oauth->oauth('oauth/access_token', ['oauth_verifier' => $oauthVerifier]);
+        try {
+            $result = $this->oauth->oauth('oauth/access_token', ['oauth_verifier' => $oauthVerifier]);
+        } catch (TwitterOAuthException $e) {
+            throw TwitterApiErrorException::createFromTwitterOAuthException($e);
+        }
+        $this->handleErrorIfNeeded($result, $this->oauth->getLastHttpCode());
         return new AccessToken(
             $result['oauth_token'],
             $result['oauth_token_secret']
@@ -164,12 +174,12 @@ class TwitterApiV2Service extends AbstractService
      * @param string $userId
      * @param int $count
      * @param string|null $paginationToken next_token か previous_token のどちらかを渡す
-     * @throws TwitterApiErrorException
      * @return array{ids: string[], result_count: int, next_token: string|null, previous_token: string|null}
      *     ids: ユーザのIDの配列
      *     result_count: 取得できたIDの数
      *     next_token: 次のページへ進むためのトークン
      *     previous_token: 前のページに戻るためのトークン
+     * @throws TwitterApiErrorException
      */
     public function getFollowingIds(
         AccessToken $accessToken,
@@ -201,17 +211,16 @@ class TwitterApiV2Service extends AbstractService
      * @param AccessToken $accessToken
      * @param string $userId
      * @param string $targetUserId
-     * @throws TwitterApiErrorException
      * @return array{following: bool, pending_follow: bool}
      *     following: フォローできたかどうか。鍵垢の場合はfalseになる。
      *     pending_follow: フォローリクエスト中かどうか。鍵垢の場合はtrueになる。
+     * @throws TwitterApiErrorException
      */
     public function followByUserId(
         AccessToken $accessToken,
         string $userId,
         string $targetUserId
-    ): array
-    {
+    ): array {
         $this->setAccessToken($accessToken);
         $result = $this->post("users/{$userId}/following", ['target_user_id' => $targetUserId], true);
         return [
@@ -238,7 +247,11 @@ class TwitterApiV2Service extends AbstractService
      */
     protected function get(string $path, array $parameters = []): array
     {
-        $result = $this->oauth->get($path, $parameters);
+        try {
+            $result = $this->oauth->get($path, $parameters);
+        } catch (TwitterOAuthException $e) {
+            throw TwitterApiErrorException::createFromTwitterOAuthException($e);
+        }
         $resultArr = Json::decode(Json::encode($result)); // 再帰的にキャストするために一度json文字列にしてから再度連想配列に戻す
         $this->handleErrorIfNeeded($resultArr, $this->oauth->getLastHttpCode());
         return $resultArr;
@@ -253,7 +266,11 @@ class TwitterApiV2Service extends AbstractService
      */
     protected function post(string $path, array $parameters = [], bool $json = false): array
     {
-        $result = $this->oauth->post($path, $parameters, $json);
+        try {
+            $result = $this->oauth->post($path, $parameters, $json);
+        } catch (TwitterOAuthException $e) {
+            throw TwitterApiErrorException::createFromTwitterOAuthException($e);
+        }
         $resultArr = Json::decode(Json::encode($result)); // 再帰的にキャストするために一度json文字列にしてから再度連想配列に戻す
         $this->handleErrorIfNeeded($resultArr, $this->oauth->getLastHttpCode());
         return $resultArr;

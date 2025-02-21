@@ -267,12 +267,16 @@ class TwitterApiService extends AbstractService
     /**
      * @param string $path
      * @param array<string, mixed> $parameters
-     * @return array
+     * @return array<string, mixed>
      * @throws TwitterApiErrorException
      */
     protected function get(string $path, array $parameters = []): array
     {
-        $result = $this->oauth->get($path, $parameters);
+        try {
+            $result = $this->oauth->get($path, $parameters);
+        } catch (TwitterOAuthException $e) {
+            throw new TwitterApiErrorException($e->getMessage());
+        }
         $resultArr = Json::decode(Json::encode($result)); // 再帰的にキャストするために一度json文字列にしてから再度連想配列に戻す
         $this->handleErrorIfNeeded($resultArr);
         return $resultArr;
@@ -281,17 +285,24 @@ class TwitterApiService extends AbstractService
     /**
      * @param string $path
      * @param array<string, mixed> $parameters
-     * @return array
+     * @return array<string, mixed>
      * @throws TwitterApiErrorException
      */
     protected function post(string $path, array $parameters = []): array
     {
-        $result = $this->oauth->post($path, $parameters);
+        try {
+            $result = $this->oauth->post($path, $parameters);
+        } catch (TwitterOAuthException $e) {
+            throw new TwitterApiErrorException($e->getMessage());
+        }
         $resultArr = Json::decode(Json::encode($result)); // 再帰的にキャストするために一度json文字列にしてから再度連想配列に戻す
         $this->handleErrorIfNeeded($resultArr);
         return $resultArr;
     }
 
+    /**
+     * @throws TwitterApiErrorException
+     */
     protected function handleErrorIfNeeded(array $result): void
     {
         if (!empty($result['errors'])) {
