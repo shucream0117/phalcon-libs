@@ -90,12 +90,16 @@ class PayJpService extends AbstractService
     const ERROR_TYPE_AUTH = 'auth_error'; // 認証エラー
     const ERROR_TYPE_INVALID_REQUEST = 'invalid_request_error'; // 無効なリクエスト
 
-    // エラー code
+    // エラー code (カード関連)
     const ERROR_CODE_EXPIRED_CARD = 'expired_card'; // カードの有効期限切れ
     const ERROR_CODE_CARD_DECLINED = 'card_declined'; // カードが拒否された
     const ERROR_CODE_FLAGGED = 'card_flagged'; // カードを原因としたエラーが続いたことによる一時的なロックアウト
     const ERROR_CODE_INVALID_CARD = 'invalid_card'; // 無効なカード
     const ERROR_CODE_PROCESSING_ERROR = 'processing_error'; // 決済ネットワーク上で生じたエラー
+    const ERROR_CODE_INVALID_CVC = 'invalid_cvc'; // CVCが無効
+    const ERROR_UNACCEPTABLE_BRAND = 'unacceptable_brand'; // 未対応のカードブランド
+
+    // エラー code (3Dセキュア関連)
     const ERROR_CODE_INVALID_THREE_D_SECURE_STATE = 'invalid_three_d_secure_state'; // 3Dセキュア中に二重に処理されるなど不正な遷移をした
     const ERROR_CODE_THREE_D_SECURE_INCOMPLETE = 'three_d_secure_incompleted'; // 3Dセキュアフローが完了していない状態で別の操作を行った
     const ERROR_CODE_THREE_D_SECURE_FAILED = 'three_d_secure_failed'; // 3Dセキュア認証に失敗した
