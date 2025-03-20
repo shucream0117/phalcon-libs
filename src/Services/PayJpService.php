@@ -96,7 +96,7 @@ class PayJpService extends AbstractService
     const ERROR_CODE_FLAGGED = 'card_flagged'; // カードを原因としたエラーが続いたことによる一時的なロックアウト
     const ERROR_CODE_INVALID_CARD = 'invalid_card'; // 無効なカード
     const ERROR_CODE_PROCESSING_ERROR = 'processing_error'; // 決済ネットワーク上で生じたエラー
-    const ERROR_CODE_INVALID_CVC = 'invalid_cvc'; // CVCが無効
+    const ERROR_CODE_INCORRECT_CARD_DATA = 'incorrect_card_data'; // カード情報が誤り
     const ERROR_UNACCEPTABLE_BRAND = 'unacceptable_brand'; // 未対応のカードブランド
 
     // エラー code (3Dセキュア関連)
