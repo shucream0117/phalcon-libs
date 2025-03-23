@@ -24,6 +24,11 @@ class S3
         $this->client = $client;
     }
 
+    public function getS3Client(): S3Client
+    {
+        return $this->client;
+    }
+
     /**
      * S3に保存する
      *

@@ -23,6 +23,16 @@ class Ses implements EmailTransmitterInterface
         $this->sesClient = $client;
     }
 
+    public function getSesClient(): SesClient
+    {
+        return $this->sesClient;
+    }
+
+    public function getSendQuota(): Result
+    {
+        return $this->getSesClient()->getSendQuota();
+    }
+
     private function getSender(): string
     {
         $name = mb_encode_mimeheader($this->senderName, 'UTF-7', 'Q');
@@ -58,7 +68,6 @@ class Ses implements EmailTransmitterInterface
             ],
         ]);
     }
-
     public function sendTextMessage(string $to, string $subject, string $body): Result
     {
         return $this->sendTextMessageToMany([$to], $subject, $body);
