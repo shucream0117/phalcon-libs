@@ -6,6 +6,7 @@ namespace Shucream0117\PhalconLib\Services\Aws;
 
 use Aws\Result;
 use Aws\Ses\SesClient;
+use Shucream0117\PhalconLib\Entities\Aws\SesQuota;
 use Shucream0117\PhalconLib\Services\EmailTransmitterInterface;
 
 class Ses implements EmailTransmitterInterface
@@ -28,9 +29,15 @@ class Ses implements EmailTransmitterInterface
         return $this->sesClient;
     }
 
-    public function getSendQuota(): Result
+    public function getSendQuota(): SesQuota
     {
-        return $this->getSesClient()->getSendQuota();
+        $quota = $this->getSesClient()->getSendQuota();
+        return new SesQuota(
+            (int)$quota->get('Max24HourSend'),
+            (int)$quota->get('MaxSendRate'),
+            (int)$quota->get('SentLast24Hours'),
+            $quota
+        );
     }
 
     private function getSender(): string
