@@ -10,12 +10,15 @@ use Exception;
 
 class S3
 {
-    const STORAGE_CLASS_STANDARD = 'STANDARD'; // 標準
-    const STORAGE_CLASS_STANDARD_IA = 'STANDARD_IA'; // 標準低頻度
-    const STORAGE_CLASS_ONEZONE_IA = 'ONEZONE_IA'; // 1ゾーン低頻度
-    const STORAGE_CLASS_INTELLIGENT_TIERING = 'INTELLIGENT_TIERING'; // 30日間アクセスがないときは低頻度になる賢いやつ
+    public const STORAGE_CLASS_STANDARD = 'STANDARD'; // 標準
+    public const STORAGE_CLASS_STANDARD_IA = 'STANDARD_IA'; // 標準低頻度
+    public const STORAGE_CLASS_ONEZONE_IA = 'ONEZONE_IA'; // 1ゾーン低頻度
+    public const STORAGE_CLASS_INTELLIGENT_TIERING = 'INTELLIGENT_TIERING'; // 30日間アクセスがないときは低頻度になる賢いやつ
 
-    const ACL_PRIVATE = 'private';
+    public const ACL_PRIVATE = 'private';
+
+    public const METADATA_DIRECTIVE_COPY = 'COPY';
+    public const METADATA_DIRECTIVE_REPLACE = 'REPLACE';
 
     private S3Client $client;
 
@@ -237,6 +240,36 @@ class S3
         return $this->saveToS3($data, null, $bucket, $destinationFilePath, $contentType, $acl, static::STORAGE_CLASS_INTELLIGENT_TIERING);
     }
 
+    /**
+     * S3のファイルをコピーする
+     * @param string $bucket
+     * @param string $sourceFilePath
+     * @param string $destinationFilePath
+     * @param string $metadataDirective
+     * @param string|null $storageClass
+     * @param string|null $acl
+     * @return Result
+     */
+    public function copy(
+        string $bucket,
+        string $sourceFilePath,
+        string $destinationFilePath,
+        string $metadataDirective = self::METADATA_DIRECTIVE_COPY,
+        ?string $storageClass = null,
+        ?string $acl = self::ACL_PRIVATE
+    ): Result {
+        $params = [
+            'Bucket' => $bucket,
+            'CopySource' => $sourceFilePath,
+            'Key' => $destinationFilePath,
+            'MetadataDirective' => $metadataDirective,
+            'ACL' => $acl,
+        ];
+        if ($storageClass) {
+            $params['StorageClass'] = $storageClass;
+        }
+        return $this->client->copyObject($params);
+    }
 
     /**
      * 削除する
