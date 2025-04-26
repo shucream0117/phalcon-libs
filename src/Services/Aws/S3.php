@@ -242,25 +242,27 @@ class S3
 
     /**
      * S3のファイルをコピーする
-     * @param string $bucket
+     * @param string $sourceBucket
      * @param string $sourceFilePath
+     * @param string $destinationBucket
      * @param string $destinationFilePath
-     * @param string $metadataDirective
      * @param string|null $storageClass
+     * @param string $metadataDirective
      * @param string|null $acl
      * @return Result
      */
     public function copy(
-        string $bucket,
+        string $sourceBucket,
         string $sourceFilePath,
+        string $destinationBucket,
         string $destinationFilePath,
-        string $metadataDirective = self::METADATA_DIRECTIVE_COPY,
         ?string $storageClass = null,
+        string $metadataDirective = self::METADATA_DIRECTIVE_COPY,
         ?string $acl = self::ACL_PRIVATE
     ): Result {
         $params = [
-            'Bucket' => $bucket,
-            'CopySource' => $sourceFilePath,
+            'CopySource' => "{$sourceBucket}/{$sourceFilePath}",
+            'Bucket' => $destinationBucket,
             'Key' => $destinationFilePath,
             'MetadataDirective' => $metadataDirective,
             'ACL' => $acl,
