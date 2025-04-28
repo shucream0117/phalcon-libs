@@ -17,3 +17,7 @@ $ docker compose run --rm app vendor/bin/phpunit
 ```console
 $ docker compose run --rm app composer update
 ```
+
+# Memo
+
+- `enqueue/redis` は PHP7.4 では 0.10.19 に固定しないと動かないためそのようになっています
