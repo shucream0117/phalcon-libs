@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4d50c27b2d046dbccabbf1d79807d85e",
+    "content-hash": "095a7308e136e5d2d9e0918694965068",
     "packages": [
         {
             "name": "abraham/twitteroauth",
@@ -411,16 +411,16 @@
         },
         {
             "name": "enqueue/enqueue",
-            "version": "0.10.25",
+            "version": "0.10.23",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-enqueue/enqueue.git",
-                "reference": "8cef42721bf79ef8e9bc631f88ccb07d2034dd9c"
+                "reference": "4d5f16316dbeafd9031c1541c69044ddf2e8440f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-enqueue/enqueue/zipball/8cef42721bf79ef8e9bc631f88ccb07d2034dd9c",
-                "reference": "8cef42721bf79ef8e9bc631f88ccb07d2034dd9c",
+                "url": "https://api.github.com/repos/php-enqueue/enqueue/zipball/4d5f16316dbeafd9031c1541c69044ddf2e8440f",
+                "reference": "4d5f16316dbeafd9031c1541c69044ddf2e8440f",
                 "shasum": ""
             },
             "require": {
@@ -503,7 +503,7 @@
                 "issues": "https://github.com/php-enqueue/enqueue-dev/issues",
                 "source": "https://github.com/php-enqueue/enqueue-dev"
             },
-            "time": "2025-01-18T00:29:10+00:00"
+            "time": "2024-09-17T12:45:33+00:00"
         },
         {
             "name": "enqueue/null",
