@@ -169,6 +169,28 @@ class StringUtil extends Str
     }
 
     /**
+     * 英数字をを半角にする
+     *
+     * @param string $str
+     * @return string
+     */
+    public static function toHalfWidthAlphanumeric(string $str): string
+    {
+        return mb_convert_kana($str, 'rn', 'UTF-8');
+    }
+
+    /**
+     * 文字列を半角に変換する(英数字・記号・カタカナ)
+     *
+     * @param string $str
+     * @return string
+     */
+    public static function toHalfWidth(string $str): string
+    {
+        return mb_convert_kana($str, 'ask', 'UTF-8');
+    }
+
+    /**
      * 文字列がメールアドレスかどうか判定する
      *
      * @param string $str

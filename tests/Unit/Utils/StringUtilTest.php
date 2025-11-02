@@ -94,4 +94,50 @@ class StringUtilTest extends TestBase
             ['🍕こん🍣にちは🍺', true],
         ];
     }
+
+    /**
+     * @covers StringUtil::toHalfWidthAlphanumeric
+     * @dataProvider dataProviderForTestToHalfWidthAlphanumeric
+     */
+    public function testToHalfWidthAlphanumeric(string $input, string $expected)
+    {
+        $this->assertSame($expected, StringUtil::toHalfWidthAlphanumeric($input));
+    }
+
+    public function dataProviderForTestToHalfWidthAlphanumeric(): array
+    {
+        return [
+            ['ａｂｃ１２３', 'abc123'],
+            ['abc123', 'abc123'],
+            ['こんにちはＡＢc1２3', 'こんにちはABc123'], // 混在している場合
+            ['ＡＢＣ！＠＃', 'ABC！＠＃'], // 記号はそのまま
+            ['テスト１２３test', 'テスト123test'], // カナはそのまま
+            ['！＠＃$％＾＆＊()', '！＠＃$％＾＆＊()'],
+            ['半角ｶﾀｶﾅ', '半角ｶﾀｶﾅ'],
+            ['スペース　全角', 'スペース　全角'], // スペースは変換されない
+        ];
+    }
+
+    /**
+     * @covers StringUtil::toHalfWidth
+     * @dataProvider dataProviderForTestToHalfWidth
+     */
+    public function testToHalfWidth(string $input, string $expected)
+    {
+        $this->assertSame($expected, StringUtil::toHalfWidth($input));
+    }
+
+    public function dataProviderForTestToHalfWidth(): array
+    {
+        return [
+            ['ａｂｃ１２３', 'abc123'],
+            ['abc123', 'abc123'],
+            ['こんにちはＡＢc1２3', 'こんにちはABc123'], // 混在している場合
+            ['ＡＢＣ！＠＃', 'ABC!@#'], // 記号も変換される
+            ['テスト１２３test', 'ﾃｽﾄ123test'], // カナはそのまま
+            ['！＠＃$％＾＆＊()', '!@#$%^&*()'],
+            ['半角ｶﾀｶﾅ', '半角ｶﾀｶﾅ'],
+            ['スペース　全角', 'ｽﾍﾟｰｽ 全角'], // スペースも変換される
+        ];
+    }
 }
