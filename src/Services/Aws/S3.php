@@ -8,14 +8,20 @@ use Aws\Result;
 use Aws\S3\S3Client;
 use Exception;
 
+/*
+ * TODO AbstractObjectStorageService を継承する形に移行したいが、Phalcon5対応のときにやる
+ */
 class S3
 {
-    const STORAGE_CLASS_STANDARD = 'STANDARD'; // 標準
-    const STORAGE_CLASS_STANDARD_IA = 'STANDARD_IA'; // 標準低頻度
-    const STORAGE_CLASS_ONEZONE_IA = 'ONEZONE_IA'; // 1ゾーン低頻度
-    const STORAGE_CLASS_INTELLIGENT_TIERING = 'INTELLIGENT_TIERING'; // 30日間アクセスがないときは低頻度になる賢いやつ
+    public const STORAGE_CLASS_STANDARD = 'STANDARD'; // 標準
+    public const STORAGE_CLASS_STANDARD_IA = 'STANDARD_IA'; // 標準低頻度
+    public const STORAGE_CLASS_ONEZONE_IA = 'ONEZONE_IA'; // 1ゾーン低頻度
+    public const STORAGE_CLASS_INTELLIGENT_TIERING = 'INTELLIGENT_TIERING'; // 30日間アクセスがないときは低頻度になる賢いやつ
 
-    const ACL_PRIVATE = 'private';
+    public const ACL_PRIVATE = 'private';
+
+    public const METADATA_DIRECTIVE_COPY = 'COPY';
+    public const METADATA_DIRECTIVE_REPLACE = 'REPLACE';
 
     private S3Client $client;
 
@@ -24,10 +30,16 @@ class S3
         $this->client = $client;
     }
 
+    public function getS3Client(): S3Client
+    {
+        return $this->client;
+    }
+
     /**
      * S3に保存する
      *
-     * @param string $data
+     * @param string|null $data
+     * @param string|null $sourceFilePath
      * @param string $bucket
      * @param string $filePath
      * @param string $contentType
@@ -37,25 +49,120 @@ class S3
      * @throws Exception
      */
     private function saveToS3(
-        string $data,
+        ?string $data,
+        ?string $sourceFilePath,
         string $bucket,
         string $filePath,
         string $contentType,
         string $acl,
         string $storageClass
     ): Result {
-        return $this->client->putObject([
+        if (!$data && !$sourceFilePath) {
+            throw new Exception('data or sourceFilePath is required');
+        }
+        if ($data && $sourceFilePath) {
+            throw new Exception('data and sourceFilePath are exclusive');
+        }
+        $params = [
             'Bucket' => $bucket,
             'Key' => $filePath,
-            'Body' => $data,
             'ACL' => $acl,
             'ContentType' => $contentType,
             'StorageClass' => $storageClass,
-        ]);
+        ];
+        if ($data) {
+            $params['Body'] = $data;
+        }
+        if ($sourceFilePath) {
+            $params['SourceFile'] = $sourceFilePath;
+        }
+        return $this->client->putObject($params);
     }
 
     /**
-     * ファイルをS3(スタンダード)に保存する
+     * ローカルのファイルパスを指定してS3に保存する
+     *
+     * @param string $sourceFilePath
+     * @param string $bucket
+     * @param string $destinationFilePath
+     * @param string $contentType
+     * @param string|null $acl
+     * @return Result
+     * @throws Exception
+     */
+    public function saveToS3StorageClassStandardFromFilePath(
+        string $sourceFilePath,
+        string $bucket,
+        string $destinationFilePath,
+        string $contentType,
+        ?string $acl = self::ACL_PRIVATE
+    ): Result {
+        return $this->saveToS3(null, $sourceFilePath, $bucket, $destinationFilePath, $contentType, $acl, static::STORAGE_CLASS_STANDARD);
+    }
+
+    /**
+     * ローカルのファイルパスを指定してS3に保存する
+     * @param string $sourceFilePath
+     * @param string $bucket
+     * @param string $destinationFilePath
+     * @param string $contentType
+     * @param string|null $acl
+     * @return Result
+     * @throws Exception
+     */
+    public function saveToS3StorageClassStandardIAFromFilePath(
+        string $sourceFilePath,
+        string $bucket,
+        string $destinationFilePath,
+        string $contentType,
+        ?string $acl = self::ACL_PRIVATE
+    ): Result {
+        return $this->saveToS3(null, $sourceFilePath, $bucket, $destinationFilePath, $contentType, $acl, static::STORAGE_CLASS_STANDARD_IA);
+    }
+
+
+    /**
+     * ローカルのファイルパスを指定してS3に保存する
+     * @param string $sourceFilePath
+     * @param string $bucket
+     * @param string $destinationFilePath
+     * @param string $contentType
+     * @param string|null $acl
+     * @return Result
+     * @throws Exception
+     */
+    public function saveToS3StorageClassOneZoneIAFromFilePath(
+        string $sourceFilePath,
+        string $bucket,
+        string $destinationFilePath,
+        string $contentType,
+        ?string $acl = self::ACL_PRIVATE
+    ): Result {
+        return $this->saveToS3(null, $sourceFilePath, $bucket, $destinationFilePath, $contentType, $acl, static::STORAGE_CLASS_ONEZONE_IA);
+    }
+
+    /**
+     * ローカルのファイルパスを指定してS3に保存する
+     * @param string $sourceFilePath
+     * @param string $bucket
+     * @param string $destinationFilePath
+     * @param string $contentType
+     * @param string|null $acl
+     * @return Result
+     * @throws Exception
+     */
+    public function saveToS3StorageClassIntelligentTieringFromFilePath(
+        string $sourceFilePath,
+        string $bucket,
+        string $destinationFilePath,
+        string $contentType,
+        ?string $acl = self::ACL_PRIVATE
+    ): Result {
+        return $this->saveToS3(null, $sourceFilePath, $bucket, $destinationFilePath, $contentType, $acl, static::STORAGE_CLASS_INTELLIGENT_TIERING);
+    }
+
+    /**
+     * ファイルをS3に保存する(スタンダード)
      *
      * @param string $data
      * @param string $bucket
@@ -72,11 +179,11 @@ class S3
         string $contentType,
         ?string $acl = self::ACL_PRIVATE
     ): Result {
-        return $this->saveToS3($data, $bucket, $filePath, $contentType, $acl, static::STORAGE_CLASS_STANDARD);
+        return $this->saveToS3($data, null, $bucket, $filePath, $contentType, $acl, static::STORAGE_CLASS_STANDARD);
     }
 
     /**
-     * ファイルをS3(スタンダードIA)に保存する
+     * ファイルをS3に保存する(スタンダードIA)
      *
      * @param string $encodedImage
      * @param string $bucket
@@ -93,7 +200,80 @@ class S3
         string $contentType,
         ?string $acl = self::ACL_PRIVATE
     ): Result {
-        return $this->saveToS3($encodedImage, $bucket, $filePath, $contentType, $acl, static::STORAGE_CLASS_STANDARD_IA);
+        return $this->saveToS3($encodedImage, null, $bucket, $filePath, $contentType, $acl, static::STORAGE_CLASS_STANDARD_IA);
+    }
+
+    /**
+     * ファイルをS3に保存する(1ゾーン低頻度)
+     * @param string $data
+     * @param string $bucket
+     * @param string $destinationFilePath
+     * @param string $contentType
+     * @param string|null $acl
+     * @return Result
+     * @throws Exception
+     */
+    public function saveToS3StorageClassOneZoneIA(
+        string $data,
+        string $bucket,
+        string $destinationFilePath,
+        string $contentType,
+        ?string $acl = self::ACL_PRIVATE
+    ): Result {
+        return $this->saveToS3($data, null, $bucket, $destinationFilePath, $contentType, $acl, static::STORAGE_CLASS_ONEZONE_IA);
+    }
+
+    /**
+     * ファイルをS3に保存する(インテリジェントティアリング)
+     * @param string $data
+     * @param string $bucket
+     * @param string $destinationFilePath
+     * @param string $contentType
+     * @param string|null $acl
+     * @return Result
+     * @throws Exception
+     */
+    public function saveToS3StorageClassIntelligentTiering(
+        string $data,
+        string $bucket,
+        string $destinationFilePath,
+        string $contentType,
+        ?string $acl = self::ACL_PRIVATE
+    ): Result {
+        return $this->saveToS3($data, null, $bucket, $destinationFilePath, $contentType, $acl, static::STORAGE_CLASS_INTELLIGENT_TIERING);
+    }
+
+    /**
+     * S3のファイルをコピーする
+     * @param string $sourceBucket
+     * @param string $sourceFilePath
+     * @param string $destinationBucket
+     * @param string $destinationFilePath
+     * @param string|null $storageClass
+     * @param string $metadataDirective
+     * @param string|null $acl
+     * @return Result
+     */
+    public function copy(
+        string $sourceBucket,
+        string $sourceFilePath,
+        string $destinationBucket,
+        string $destinationFilePath,
+        ?string $storageClass = null,
+        string $metadataDirective = self::METADATA_DIRECTIVE_COPY,
+        ?string $acl = self::ACL_PRIVATE
+    ): Result {
+        $params = [
+            'CopySource' => "{$sourceBucket}/{$sourceFilePath}",
+            'Bucket' => $destinationBucket,
+            'Key' => $destinationFilePath,
+            'MetadataDirective' => $metadataDirective,
+            'ACL' => $acl,
+        ];
+        if ($storageClass) {
+            $params['StorageClass'] = $storageClass;
+        }
+        return $this->client->copyObject($params);
     }
 
     /**

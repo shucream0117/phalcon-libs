@@ -10,15 +10,27 @@ use Shucream0117\PhalconLib\Constants\MimeType;
 
 class Imgix
 {
+    /*
+     * https://docs.imgix.com/apis/rendering/size/fit
+     */
     const FIT_CROP = 'crop';
     const FIT_CLIP = 'clip';
     const FIT_MAX = 'max';
+    const FIT_MIN = 'min';
+    const FIT_CLAMP = 'clamp';
+    const FIT_FACEAREA = 'facearea';
+    const FIT_FILL = 'fill';
+    const FIT_FILLMAX = 'fillmax';
+    const FIT_SCALE = 'scale';
+    const FIT_FACE_AREA = 'facearea';
+
+    const FILL_SOLID = 'solid';
+    const FILL_BLUR = 'blur';
 
     const FORMAT_JPG = 'jpg';
     const FORMAT_PNG = 'png';
     const FORMAT_GIF = 'gif';
     const FORMAT_WEBP = 'webp';
-
     const FORMAT_MP4 = 'mp4';
     const FORMAT_WEBM = 'webm';
 

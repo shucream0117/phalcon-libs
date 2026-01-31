@@ -26,6 +26,23 @@ class Json
         return json_decode($data, true, $depth, $options);
     }
 
+    /**
+     * decode結果をオブジェクトで返す
+     *
+     * @param string $data
+     * @param int $options
+     * @param int $depth
+     * @return array
+     */
+    public static function decodeAsStdObj(
+        string $data,
+        int $options = self::JSON_DECODE_DEFAULT_OPTIONS,
+        int $depth = 512
+    ): \stdClass
+    {
+        return json_decode($data, false, $depth, $options);
+    }
+
 
     /**
      * @param \JsonSerializable|array|\Object $data

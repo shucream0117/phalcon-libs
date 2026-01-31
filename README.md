@@ -10,10 +10,15 @@ $ composer require shucream0117/phalcon-libs
 
 # Testing
 ```console
-$ docker-compose run --rm app vendor/bin/phpunit
+$ docker compose run --rm app vendor/bin/phpunit
 ```
 
 # Composer update
 ```console
-$ docker-compose run --rm app composer update
+$ docker compose run --rm app composer update
 ```
+
+# Memo
+
+- `enqueue/enqueue` は PHP7.4 では 0.10.23 に固定しないと動かないためそのようになっています
+- `enqueue/redis` は PHP7.4 では 0.10.19 に固定しないと動かないためそのようになっています

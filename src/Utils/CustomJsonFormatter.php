@@ -10,9 +10,17 @@ class CustomJsonFormatter extends \Phalcon\Logger\Formatter\Json
 {
     public function format(Item $item): string
     {
-        // 一旦親クラスのメソッドで処理を行い、Json文字列を配列に戻してから再度Json文字列にする。無駄が多いが...
-        $tmp = Json::decode(parent::format($item));
-        $tmp['context'] = $item->getContext(); // contextを追加
-        return Json::encode($tmp);
+        /*
+         * context に単一のキーしか存在しない場合で、そのキーに対応する値が配列の場合に
+         * Array to string conversion の Notice が出る問題があるため、フォーマットを処理を自前で実装
+         * ついでにデフォルトのフォーマッターが出力してくれない context の内容も出力する。
+         */
+        $data = [
+            'type' => $item->getName(),
+            'message' => $item->getMessage(),
+            'timestamp' => $this->getFormattedDate(), // "2024-04-05T15:02:56+00:00" のような形式
+            'context' => $item->getContext(),
+        ];
+        return Json::encode($data);
     }
 }

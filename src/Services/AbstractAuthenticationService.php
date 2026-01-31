@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shucream0117\PhalconLib\Services;
 
-use DateTime;
+use DateTimeInterface;
 use Phalcon\Storage\Adapter\AdapterInterface;
 use Shucream0117\PhalconLib\Entities\AuthenticationKey;
 use Shucream0117\PhalconLib\Models\Loginable;
@@ -51,10 +51,10 @@ abstract class AbstractAuthenticationService extends AbstractService
      * 認証キーを作成し、Redisに入れる
      *
      * @param Loginable $user
-     * @param DateTime|null $now
+     * @param DateTimeInterface|null $now
      * @return AuthenticationKey
      */
-    public function createAuthKey(Loginable $user, ?DateTime $now = null): AuthenticationKey
+    public function createAuthKey(Loginable $user, ?DateTimeInterface $now = null): AuthenticationKey
     {
         $key = $this->createKey($user);
         $this->storage->set(
@@ -63,7 +63,7 @@ abstract class AbstractAuthenticationService extends AbstractService
             $this->getAuthKeyTtl()
         );
         if (!$now) {
-            $now = Date::createDateTime();
+            $now = Date::createDateTimeImmutable();
         }
         return new AuthenticationKey($key, $now->getTimestamp() + $this->getAuthKeyTtl());
     }

@@ -10,6 +10,8 @@ namespace Shucream0117\PhalconLib\Utils;
 
 class PhinxUtil
 {
+    const CHARSET_UTF8MB4 = 'utf8mb4';
+
     const COLLATION_UTF8_BIN = 'utf8_bin';
     const COLLATION_UTF8_GENERAL_CI = 'utf8_general_ci';
     const COLLATION_UTF8MB4_BIN = 'utf8mb4_bin';
@@ -42,6 +44,15 @@ class PhinxUtil
         return [
             'length' => static::ULID_LENGTH,
             'collation' => static::COLLATION_UTF8_BIN,
+            'null' => $null,
+        ];
+    }
+
+    public static function ulidPkColumnOptionUtf8Mb4GeneralCi(bool $null = false): array
+    {
+        return [
+            'length' => static::ULID_LENGTH,
+            'collation' => static::COLLATION_UTF8MB4_GENERAL_CI,
             'null' => $null,
         ];
     }

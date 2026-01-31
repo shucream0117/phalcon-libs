@@ -22,16 +22,6 @@ class TwitterApiV2Service extends AbstractService
 {
     private TwitterOAuth $oauth;
 
-    /*
-     * エラーコードたち
-     * @see https://developer.twitter.com/en/support/twitter-api/error-troubleshooting
-     */
-    public const ERROR_CODE_RATE_LIMIT_EXCEEDED = 88;
-    public const ERROR_CODE_INVALID_OR_EXPIRED_TOKEN = 89;
-    public const ERROR_CODE_UNABLE_TO_VERIFY_CREDENTIALS = 99;
-    public const ERROR_CODE_OVER_CAPACITY = 130;
-    public const ERROR_CODE_INTERNAL_ERROR = 131;
-
     public const MAX_FOLLOWING_IDS_FETCH_COUNT = 1000;
 
     /*
@@ -89,11 +79,16 @@ class TwitterApiV2Service extends AbstractService
     /**
      * @param string $callbackUrl
      * @return RequestToken
-     * @throws TwitterOAuthException
+     * @throws TwitterApiErrorException
      */
     public function getRequestToken(string $callbackUrl): RequestToken
     {
-        $result = $this->oauth->oauth('oauth/request_token', ['oauth_callback' => $callbackUrl]);
+        try {
+            $result = $this->oauth->oauth('oauth/request_token', ['oauth_callback' => $callbackUrl]);
+        } catch (TwitterOAuthException $e) {
+            throw TwitterApiErrorException::createFromTwitterOAuthException($e);
+        }
+        $this->handleErrorIfNeeded($result, $this->oauth->getLastHttpCode());
         return new RequestToken($result['oauth_token'], $result['oauth_token_secret']);
     }
 
@@ -110,12 +105,17 @@ class TwitterApiV2Service extends AbstractService
      * @param RequestToken $requestToken
      * @param string $oauthVerifier
      * @return AccessToken
-     * @throws TwitterOAuthException
+     * @throws TwitterApiErrorException
      */
     public function getAccessToken(RequestToken $requestToken, string $oauthVerifier): AccessToken
     {
         $this->oauth->setOauthToken($requestToken->getToken(), $requestToken->getSecret());
-        $result = $this->oauth->oauth('oauth/access_token', ['oauth_verifier' => $oauthVerifier]);
+        try {
+            $result = $this->oauth->oauth('oauth/access_token', ['oauth_verifier' => $oauthVerifier]);
+        } catch (TwitterOAuthException $e) {
+            throw TwitterApiErrorException::createFromTwitterOAuthException($e);
+        }
+        $this->handleErrorIfNeeded($result, $this->oauth->getLastHttpCode());
         return new AccessToken(
             $result['oauth_token'],
             $result['oauth_token_secret']
@@ -123,17 +123,29 @@ class TwitterApiV2Service extends AbstractService
     }
 
     /**
+     * User object 取得系 API の user.fields に渡すパラメーターを制御する
+     * @return array<self::USER_FIELDS_*>
+     */
+    protected function getUserFields(): array
+    {
+        return [
+            self::USER_FIELDS_ID,
+            self::USER_FIELDS_NAME,
+            self::USER_FIELDS_USERNAME,
+        ];
+    }
+
+    /**
      * access token による user 取得。75req/15min per user
      * @param AccessToken $accessToken
-     * @param array<self::USER_FIELDS_*> $userFields
      * @return AbstractTwitterUser
      * @throws TwitterApiErrorException
      */
-    public function getMe(AccessToken $accessToken, array $userFields): AbstractTwitterUser
+    public function getMe(AccessToken $accessToken): AbstractTwitterUser
     {
         $this->setAccessToken($accessToken);
         $result = $this->get('users/me', [
-            'user.fields' => implode(',', $userFields),
+            'user.fields' => implode(',', $this->getUserFields()),
         ]);
         return static::createFromUserResponse($result['data']);
     }
@@ -142,15 +154,14 @@ class TwitterApiV2Service extends AbstractService
      * id による user 取得。900req/15min per user
      * @param AccessToken $accessToken
      * @param string $userId
-     * @param array<self::USER_FIELDS_*> $userFields
      * @return AbstractTwitterUser
      * @throws TwitterApiErrorException
      */
-    public function getUserById(AccessToken $accessToken, string $userId, array $userFields): AbstractTwitterUser
+    public function getUserById(AccessToken $accessToken, string $userId): AbstractTwitterUser
     {
         $this->setAccessToken($accessToken);
         $result = $this->get("users/{$userId}", [
-            'user.fields' => implode(',', $userFields),
+            'user.fields' => implode(',', $this->getUserFields()),
         ]);
         return static::createFromUserResponse($result['data']);
     }
@@ -163,12 +174,12 @@ class TwitterApiV2Service extends AbstractService
      * @param string $userId
      * @param int $count
      * @param string|null $paginationToken next_token か previous_token のどちらかを渡す
-     * @throws TwitterApiErrorException
      * @return array{ids: string[], result_count: int, next_token: string|null, previous_token: string|null}
      *     ids: ユーザのIDの配列
      *     result_count: 取得できたIDの数
      *     next_token: 次のページへ進むためのトークン
      *     previous_token: 前のページに戻るためのトークン
+     * @throws TwitterApiErrorException
      */
     public function getFollowingIds(
         AccessToken $accessToken,
@@ -179,7 +190,7 @@ class TwitterApiV2Service extends AbstractService
         $this->setAccessToken($accessToken);
         $params = [
             'max_results' => $count,
-            'user.fields' => 'id',
+            'user.fields' => self::USER_FIELDS_ID,
         ];
         if ($paginationToken) {
             $params['pagination_token'] = $paginationToken;
@@ -200,17 +211,16 @@ class TwitterApiV2Service extends AbstractService
      * @param AccessToken $accessToken
      * @param string $userId
      * @param string $targetUserId
-     * @throws TwitterApiErrorException
      * @return array{following: bool, pending_follow: bool}
      *     following: フォローできたかどうか。鍵垢の場合はfalseになる。
      *     pending_follow: フォローリクエスト中かどうか。鍵垢の場合はtrueになる。
+     * @throws TwitterApiErrorException
      */
     public function followByUserId(
         AccessToken $accessToken,
         string $userId,
         string $targetUserId
-    ): array
-    {
+    ): array {
         $this->setAccessToken($accessToken);
         $result = $this->post("users/{$userId}/following", ['target_user_id' => $targetUserId], true);
         return [
@@ -237,9 +247,13 @@ class TwitterApiV2Service extends AbstractService
      */
     protected function get(string $path, array $parameters = []): array
     {
-        $result = $this->oauth->get($path, $parameters);
+        try {
+            $result = $this->oauth->get($path, $parameters);
+        } catch (TwitterOAuthException $e) {
+            throw TwitterApiErrorException::createFromTwitterOAuthException($e);
+        }
         $resultArr = Json::decode(Json::encode($result)); // 再帰的にキャストするために一度json文字列にしてから再度連想配列に戻す
-        $this->handleErrorIfNeeded($resultArr);
+        $this->handleErrorIfNeeded($resultArr, $this->oauth->getLastHttpCode());
         return $resultArr;
     }
 
@@ -252,19 +266,57 @@ class TwitterApiV2Service extends AbstractService
      */
     protected function post(string $path, array $parameters = [], bool $json = false): array
     {
-        $result = $this->oauth->post($path, $parameters, $json);
+        try {
+            $result = $this->oauth->post($path, $parameters, $json);
+        } catch (TwitterOAuthException $e) {
+            throw TwitterApiErrorException::createFromTwitterOAuthException($e);
+        }
         $resultArr = Json::decode(Json::encode($result)); // 再帰的にキャストするために一度json文字列にしてから再度連想配列に戻す
-        $this->handleErrorIfNeeded($resultArr);
+        $this->handleErrorIfNeeded($resultArr, $this->oauth->getLastHttpCode());
         return $resultArr;
     }
 
     /**
      * @throws TwitterApiErrorException
      */
-    protected function handleErrorIfNeeded(array $result): void
+    protected function handleErrorIfNeeded(array $result, int $statusCode): void
     {
-        if (!empty($result['errors'])) {
-            throw (new TwitterApiErrorException())->setErrors($result['errors']);
+        if ($statusCode >= 400) {
+            // Twitter API v2 では error codes を含まないエラーフォーマットも存在する
+            // https://developer.twitter.com/en/support/twitter-api/error-troubleshooting
+            // 例:
+            // {
+            //     "title": "Too Many Requests",
+            //     "detail": "Too Many Requests",
+            //     "type": "about:blank",
+            //     "status": 429
+            // }
+            //
+            // 例:
+            // {
+            //     "errors": [
+            //         {
+            //             "parameters": {
+            //                 "id": ["01GZDJ5SB79E29NM1DBJR4MM0M"]
+            //             },
+            //             "message": "The `id` query parameter value [01GZDJ5SB79E29NM1DBJR4MM0M] is not valid"
+            //         }
+            //     ],
+            //     "title": "Invalid Request",
+            //     "detail": "One or more parameters to your request was invalid.",
+            //     "type": "https://api.twitter.com/2/problems/invalid-request"
+            // }
+            //
+            // type, title, detail はいつも返ってくると書いてある。それ以外のフィールドは可変らしい。
+
+            $responseBody = Json::encode($result); // 例外のメッセージに含めるために文字列化
+            $exception = new TwitterApiErrorException($responseBody, $statusCode);
+            $exception->setResponseBody($result); // arrayでも入れておく
+            // 通常のエラーレスポンスには errors の下に code などが入る
+            if (!empty($result['errors'])) {
+                $exception->setErrors($result['errors']);
+            }
+            throw $exception;
         }
     }
 }

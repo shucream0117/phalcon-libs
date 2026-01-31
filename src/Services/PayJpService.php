@@ -12,6 +12,8 @@ use Payjp\Error\Base as PayJpErrorBase;
 use Payjp\Payjp;
 use Payjp\Plan;
 use Payjp\Subscription;
+use Payjp\ThreeDSecureRequest;
+use Payjp\Token;
 use Shucream0117\PhalconLib\Entities\PayJp\Error as PayJpError;
 use Shucream0117\PhalconLib\Exceptions\InvalidApiResponseFormatException;
 use Shucream0117\PhalconLib\Exceptions\SameCreditCardAlreadyRegisteredException;
@@ -20,6 +22,9 @@ class PayJpService extends AbstractService
 {
     const CURRENCY_JPY = 'jpy';
 
+    /*
+     * クレジットカード種別
+     */
     const BRAND_VISA = 'Visa';
     const BRAND_MASTER_CARD = 'MasterCard';
     const BRAND_JCB = 'JCB';
@@ -27,6 +32,9 @@ class PayJpService extends AbstractService
     const BRAND_DINERS_CLUB = 'Diners Club';
     const BRAND_DISCOVER = 'Discover';
 
+    /*
+     * ウェブフックイベント
+     */
     const WEBHOOK_EVENT_TYPE_CHARGE_SUCCEEDED = 'charge.succeeded';
     const WEBHOOK_EVENT_TYPE_CHARGE_FAILED = 'charge.failed';
     const WEBHOOK_EVENT_TYPE_CHARGE_UPDATED = 'charge.updated';
@@ -52,10 +60,53 @@ class PayJpService extends AbstractService
     const WEBHOOK_EVENT_TYPE_TRANSFER_SUCCEEDED = 'transfer.succeeded';
     const WEBHOOK_EVENT_TYPE_TENANT_UPDATED = 'tenant.updated';
 
+    /*
+     * サブスクリプションステータス
+     */
     const SUBSCRIPTION_STATUS_ACTIVE = 'active';
     const SUBSCRIPTION_STATUS_PAUSED = 'paused';
     const SUBSCRIPTION_STATUS_CANCELED = 'canceled';
     const SUBSCRIPTION_STATUS_TRIAL = 'trial';
+
+
+    /*
+     * 3Dセキュア認証ステータス
+     */
+    const THREE_D_SECURE_STATUS_VERIFIED = 'verified'; // 成功
+    const THREE_D_SECURE_STATUS_UNVERIFIED = 'unverified'; // 未認証
+    const THREE_D_SECURE_STATUS_ATTEMPTED = 'attempted'; // アテンプト
+    const THREE_D_SECURE_STATUS_FAILED = 'failed'; // 失敗
+    const THREE_D_SECURE_STATUS_ERROR = 'error'; // エラー
+
+    /*
+     * エラー
+     * @see https://pay.jp/docs/api/#%E3%83%AC%E3%82%B9%E3%83%9D%E3%83%B3%E3%82%B9
+     */
+    // エラー type
+    const ERROR_TYPE_CLIENT = 'client_error'; // リクエストエラー
+    const ERROR_TYPE_CARD = 'card_error'; // カードエラー
+    const ERROR_TYPE_SERVER = 'server_error'; // サーバーエラー
+    const ERROR_TYPE_NOT_ALLOWED_METHOD = 'not_allowed_method_error'; // 許可されていないメソッドエラー
+    const ERROR_TYPE_AUTH = 'auth_error'; // 認証エラー
+    const ERROR_TYPE_INVALID_REQUEST = 'invalid_request_error'; // 無効なリクエスト
+
+    // エラー code (カード関連)
+    const ERROR_CODE_EXPIRED_CARD = 'expired_card'; // カードの有効期限切れ
+    const ERROR_CODE_CARD_DECLINED = 'card_declined'; // カードが拒否された
+    const ERROR_CODE_FLAGGED = 'card_flagged'; // カードを原因としたエラーが続いたことによる一時的なロックアウト
+    const ERROR_CODE_INVALID_CARD = 'invalid_card'; // 無効なカード
+    const ERROR_CODE_PROCESSING_ERROR = 'processing_error'; // 決済ネットワーク上で生じたエラー
+    const ERROR_CODE_INCORRECT_CARD_DATA = 'incorrect_card_data'; // カード情報が誤り
+    const ERROR_UNACCEPTABLE_BRAND = 'unacceptable_brand'; // 未対応のカードブランド
+
+    // エラー code (3Dセキュア関連)
+    const ERROR_CODE_INVALID_THREE_D_SECURE_STATE = 'invalid_three_d_secure_state'; // 3Dセキュア中に二重に処理されるなど不正な遷移をした
+    const ERROR_CODE_THREE_D_SECURE_INCOMPLETE = 'three_d_secure_incompleted'; // 3Dセキュアフローが完了していない状態で別の操作を行った
+    const ERROR_CODE_THREE_D_SECURE_FAILED = 'three_d_secure_failed'; // 3Dセキュア認証に失敗した
+    const ERROR_CODE_NOT_IN_THREE_D_SECURE_FLOW  = 'not_in_three_d_secure_flow'; // 3Dセキュア対象外の支払いか、3Dセキュアフローが時間切れになった
+    const ERROR_CODE_UNVERIFIED_TOKEN = 'unverified_token'; // 3Dセキュアが完了していないトークンで支払いが行われた
+    const ERROR_CODE_THREE_D_SECURE_EXPIRED = 'three_d_secure_expired'; // 3Dセキュアの認証完了期限が切れている
+
 
     public function __construct(string $apiKey)
     {
@@ -215,6 +266,25 @@ class PayJpService extends AbstractService
     }
 
     /**
+     * カード情報を更新
+     *
+     * @param Card $card
+     * @param array<string, mixed> $params
+     * @return Card
+     */
+    public function updateCard(Card $card, array $params): Card
+    {
+        if (!$params) {
+            return $card;
+        }
+        foreach ($params as $key => $value) {
+            $card[$key] = $value;
+        }
+        $card->save();
+        return $card;
+    }
+
+    /**
      * 支払いを行う(即確定させる)
      *
      * @param Customer $customer
@@ -224,14 +294,20 @@ class PayJpService extends AbstractService
      * @return Charge
      * @throws PayJpErrorBase
      */
-    public function chargeWithCapture(Customer $customer, Card $card, int $amount, array $metadata = []): Charge
-    {
+    public function chargeWithCapture(
+        Customer $customer,
+        Card $card,
+        int $amount,
+        bool $threeDSecure = false,
+        array $metadata = []
+    ): Charge {
         return $this->charge([
             'customer' => $customer->offsetGet('id'),
             'card' => $card->offsetGet('id'),
             'amount' => $amount,
             'currency' => self::CURRENCY_JPY,
             'capture' => true,
+            'three_d_secure' => $threeDSecure,
             'metadata' => $metadata,
         ]);
     }
@@ -252,6 +328,7 @@ class PayJpService extends AbstractService
         Card $card,
         int $amount,
         int $expiryDays,
+        bool $threeDSecure = false,
         array $metadata = []
     ): Charge {
         return $this->charge([
@@ -261,6 +338,7 @@ class PayJpService extends AbstractService
             'currency' => self::CURRENCY_JPY,
             'capture' => false,
             'expiry_days' => $expiryDays,
+            'three_d_secure' => $threeDSecure,
             'metadata' => $metadata,
         ]);
     }
@@ -749,5 +827,120 @@ class PayJpService extends AbstractService
         } catch (PayJpErrorBase $e) {
             throw $e;
         }
+    }
+
+    /**
+     * Tokenオブジェクトを取得
+     *
+     * @param string $id
+     * @return Token|null
+     * @throws PayJpErrorBase
+     */
+    public function getTokenById(string $id): ?Token
+    {
+        try {
+            return Token::retrieve($id);
+        } catch (PayJpErrorBase $e) {
+            $error = PayJpError::createFromThrownError($e);
+            if ($error->getErrorCode() === PayJpError::INVALID_ID) {
+                return null;
+            }
+            throw $e; // 対象が存在しないエラーではない場合、異常なので投げ直す
+        }
+    }
+
+    /**
+     * 3Dセキュアの完了処理(Token)
+     *
+     * @param Token $token
+     * @return Token
+     */
+    public function completeThreeDSecureByToken(Token $token): Token
+    {
+        return $token->tdsFinish();
+    }
+
+    /**
+     * 3Dセキュアの完了処理(Charge)
+     *
+     * @param Charge $charge
+     * @return Charge
+     */
+    public function completeThreeDSecureByCharge(Charge $charge): Charge
+    {
+        return $charge->tdsFinish();
+    }
+
+    /**
+     * カードを指定して3Dセキュアリクエストを作成
+     *
+     * @param Card $card
+     * @return ThreeDSecureRequest
+     * @see https://pay.jp/docs/api/#3d%E3%82%BB%E3%82%AD%E3%83%A5%E3%82%A2%E3%83%AA%E3%82%AF%E3%82%A8%E3%82%B9%E3%83%88%E3%82%92%E4%BD%9C%E6%88%90
+     */
+    public function createThreeDSecureRequest(Card $card): ThreeDSecureRequest
+    {
+        return ThreeDSecureRequest::create([
+            'resource_id' => $card['id'],
+        ]);
+    }
+
+    /**
+     * 3Dセキュアリクエストを取得
+     *
+     * @param string $id 'tdsr_xxxxx' 形式
+     * @return ThreeDSecureRequest|null
+     * @throws PayJpErrorBase
+     */
+    public function getThreeDSecureRequestById(string $id): ?ThreeDSecureRequest
+    {
+        try {
+            return ThreeDSecureRequest::retrieve($id);
+        } catch (PayJpErrorBase $e) {
+            $error = PayJpError::createFromThrownError($e);
+            if ($error->getErrorCode() === PayJpError::INVALID_ID) {
+                return null;
+            }
+            throw $e; // 対象が存在しないエラーではない場合、異常なので投げ直す
+        }
+    }
+
+    /**
+     * 3Dセキュアリクエストのリストを取得する
+     * @param int $limit
+     * @param int $offset
+     * @param int|null $sinceTimestamp
+     * @param int|null $untilTimestamp
+     * @param string|null $resourceId カードIDやChargeIDなど
+     * @param string|null $tenantId
+     * @return Collection
+     */
+    public function getThreeDSecureRequestList(
+        int $limit = 100,
+        int $offset = 0,
+        ?int $sinceTimestamp = null,
+        ?int $untilTimestamp = null,
+        ?string $resourceId = null,
+        ?string $tenantId = null
+    ): Collection {
+        $params = [
+            'limit' => $limit,
+            'offset' => $offset,
+        ];
+        if (!is_null($sinceTimestamp)) {
+            $params['since'] = $sinceTimestamp;
+        }
+        if (!is_null($untilTimestamp)) {
+            $params['until'] = $untilTimestamp;
+        }
+        if (!is_null($resourceId)) {
+            $params['resource_id'] = $resourceId;
+        }
+        if (!is_null($tenantId)) {
+            $params['tenant_id'] = $tenantId;
+        }
+        /** @var Collection $result */
+        $result = ThreeDSecureRequest::all($params);
+        return $result;
     }
 }

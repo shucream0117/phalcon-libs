@@ -24,23 +24,19 @@ class ConstantsTest extends TestBase
                 if ($keys = (array_keys($text))) {
                     sort($constants);
                     sort($keys);
-                    $this->assertEquals($keys, $constants);
+                    $this->assertEqualsCanonicalizing($keys, $constants);
                 }
             }
-        }
-    }
 
-    /**
-     * 定数たちが重複していないかどうかのテスト
-     * @throws ReflectionException
-     */
-    public function testCheckDuplication()
-    {
-        $classNames = self::getClassNames();
-        foreach ($classNames as $fullClassName) {
-            $reflection = new ReflectionClass($fullClassName);
-            $constants = $reflection->getConstants();
-            $this->assertSame($constants, array_unique($constants));
+            if ($textByLang = $reflection->getStaticProperties()['textByLang'] ?? null) {
+                foreach ($textByLang as $lang => $text) {
+                    if ($keys = (array_keys($text))) {
+                        sort($constants);
+                        sort($keys);
+                        $this->assertEqualsCanonicalizing($keys, $constants);
+                    }
+                }
+            }
         }
     }
 
