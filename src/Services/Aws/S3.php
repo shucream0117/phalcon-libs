@@ -8,6 +8,9 @@ use Aws\Result;
 use Aws\S3\S3Client;
 use Exception;
 
+/*
+ * TODO AbstractObjectStorageService を継承する形に移行したいが、Phalcon5対応のときにやる
+ */
 class S3
 {
     public const STORAGE_CLASS_STANDARD = 'STANDARD'; // 標準
