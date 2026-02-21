@@ -72,4 +72,21 @@ class MimeType
         }
         throw new InvalidArgumentException("invalid mime {$mimeType} is given");
     }
+
+    /**
+     * 拡張子に対応するMimeTypeを返す
+     * @param string $extension
+     * @param bool $uppercase
+     * @return string
+     */
+    public static function extensionToMime(string $extension, bool $uppercase = false): string
+    {
+        $extension = strtolower($extension);
+        $map = array_flip(self::EXT_MAP);
+        $map['jpeg'] = $map['jpg']; // jpegもjpgと同じものとして扱う
+        if ($mimeType = ($map[$extension] ?? null)) {
+            return $uppercase? strtoupper($mimeType) : $mimeType;
+        }
+        throw new InvalidArgumentException("invalid extension {$extension} is given");
+    }
 }
