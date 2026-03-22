@@ -1,3 +1,10 @@
+# IMPORTANT
+
+This repository is no longer maintained.
+このリポジトリはアーカイブされ、開発が停止しています。
+
+---
+
 # What's This
 
 Library collection for Phalcon 4.
